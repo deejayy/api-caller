@@ -1,0 +1,47 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "api-caller": {
+      "projectType": "library",
+      "root": "projects/api-caller",
+      "sourceRoot": "projects/api-caller/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/api-caller/tsconfig.lib.json",
+            "project": "projects/api-caller/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/api-caller/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/api-caller/src/test.ts",
+            "tsConfig": "projects/api-caller/tsconfig.spec.json",
+            "karmaConfig": "projects/api-caller/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/api-caller/tsconfig.lib.json",
+              "projects/api-caller/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    }},
+  "defaultProject": "api-caller"
+}

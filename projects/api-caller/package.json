@@ -1,0 +1,33 @@
+{
+  "name": "@deejayy/api-caller",
+  "version": "1.0.0",
+  "description": "Simple Api Caller library for Angular",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deejayy/api-caller"
+  },
+  "author": "DeeJayy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/deejayy/api-caller/issues"
+  },
+  "keywords": [
+    "angular",
+    "angular 2",
+    "api",
+    "apicall"
+  ],
+  "homepage": "https://github.com/deejayy/api-caller",
+  "peerDependencies": {
+    "@angular/common": "^9.1.12",
+    "@angular/core": "^9.1.12",
+    "@ngrx/effects": "^9.2.0",
+    "@ngrx/store": "^9.2.0",
+    "@ngrx/store-devtools": "^9.2.0",
+    "immer": "^7.0.7"
+  },
+  "dependencies": {
+    "tslib": "^1.10.0"
+  }
+}
