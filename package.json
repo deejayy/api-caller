@@ -1,9 +1,10 @@
 {
   "name": "@deejayy/api-caller",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "prebuild": "cd projects/api-caller && npm version prerelease -no-git-tag-version",
     "build": "ng build api-caller --prod",
     "test": "ng test",
     "lint": "ng lint",
