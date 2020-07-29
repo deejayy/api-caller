@@ -35,13 +35,13 @@ result.data$.subscribe(console.log);
 
 ### Input
 
-Both ```createApiResults``` and ```callApi``` method needs the same parameter to be supplied: an ```ApiCallItem``` type of object.
+Both ```createApiResults()``` and ```callApi()``` method need the same parameter to be supplied: an ```ApiCallItem``` type of object.
 
 **ApiCallItem** has the following properties
 
-- ```api```: (optional) the base url of the endpoints you want to use, eg. ```https://endpoint-url/api/v1/```. Defaults to ```/```.
+- ```api```: (optional) the base url of the endpoints you want to use, eg. ```https://endpoint-url/api/v1/```. Defaults to ```/```, but check [Advanced examples](#advanced-examples) on how to set a different default.
 - ```path```: remaining part of the endpoint you want to call. It will be appended to the ```api``` property. Eg. ```path/to/call```
-- ```payload```: (optional) a JSON object which should be sent to the endpoint. Note: the request method will be ```GET``` without (or with an empty) ```payload``` value and will be ```POST``` if supplied a valid one.
+- ```payload```: (optional) a JSON object which should be sent to the endpoint. Note: the request method will be ```GET``` without (or with an empty) ```payload``` value and will be ```POST``` if a valid one is supplied.
 - ```needsAuth```: (optional) determines whether the call needs authorization. If this is set to true, you must supply a token ```Observable``` to the module at import (see [Advanced examples](#advanced-examples))
 
 ### Output
@@ -50,9 +50,9 @@ Outputs are essentially provided as streams which are returned in an ```ApiResul
 
 - ```data$```: most important observable, which will holds the response from the backend endpoint on a successful call
 - ```errorData$```: if there were an error making the request, the ```HttpErrorResponse``` type of object will be in this observable
-- ```loading$```: this state is set to ```true``` right before initiating an ```HttpClient``` request, and set to ```false``` when the call is finished (regardless of success or failure)
+- ```loading$```: this state is set to ```true``` right before initiating an ```HttpClient``` request, and set to ```false``` when the call is finished (regardless of success or failure). Useful for displaying a loading spinner when this is true.
 - ```success$```: boolean state set to true on successful call
-- ```error$```: boolean state set to true when the call is failed
+- ```error$```: boolean state set to true on a failed call
 
 ## Advanced examples
 
@@ -62,4 +62,156 @@ The ```ApiCallerService``` has an optional dependency, an ```ApiConnector``` ser
 
 - ```tokenData$```: this should be an observable of a token (type: string) necessary for making authorized requests (check ```needsAuth``` property in ```ApiCallItem``` object). Currently the library only supports "Bearer" token in the "Authorization" HTTP header field.
 - ```defaultApiUrl```: if you use a single API in most of the cases, you may want to set it as a service-scope variable, so you don't have to provide it for every single call you make. With this you have the opportinity to control the prod/test/dev API endpoints in a single place.
-- ```errorHandler```: this should be function which will be called whenever the API call is failing with an HTTP error. Useful for handling unathorized request (HTTP 4xx) in a single place.
+- ```errorHandler```: this should be a function which will be called whenever the API call is failing with an HTTP error. Useful for handling unathorized request (HTTP 4xx) in a single place. The function will receive an ```ApiInterface``` parameter.
+
+### ApiInterface properties
+
+- ```request```: an ```ApiCallItem``` object
+- ```response```: response got back from the ```HttpClient``` request
+
+### How to use ApiConnector
+
+**Step 1. Create a service based on ApiConnector**
+
+```ts
+import { Injectable } from '@angular/core';
+import { AuthService } from './auth.service';
+import { Observable } from 'rxjs';
+import { ApiConnector } from '@deejayy/api-caller';
+
+@Injectable()
+export class MyApiConnectorService extends ApiConnector {
+  public tokenData$: Observable<string>;
+  public defaultApiUrl = 'https://my-custom-api.com/';
+  public errorHandler = (payload: any) => {
+    console.log('handling... ', payload);
+  }
+
+  constructor(private authService: AuthService) {
+    super();
+    this.tokenData$ = this.authService.token$;
+  }
+}
+```
+
+**Step 2. Add this line to your app.module.ts ```providers``` array:**
+
+```ts
+providers: [
+  { provide: ApiConnector, useClass: MyApiConnectorService }
+],
+```
+
+## Tips and Tricks
+
+### Create an API catalog
+
+You may want to keep all types of API calls in a single place per app or feature module.
+
+**api-catalog.ts**
+
+```ts
+export class LoginCall implements ApiCallItem {
+  public path: string = '/users/login#LoginCall';
+  constructor(public payload: LoginData = null) { }
+}
+
+export class LogoutCall implements ApiCallItem {
+  public path: string = '/users/logout#LogoutCall';
+  public needsAuth: boolean = true;
+}
+```
+
+Note the URI fragment (#LoginCall, #LogoutCall) at the end of the urls: with this, you can create unique states in the store and can call the same endpoint with different payloads or options. URI fragment is ignored by the HttpClient library, so your backend won't receive it.
+
+In case you want to distinguish the calls in the dev console's "Network" tab and you are calling the same endpoint for different use cases, you may want to use query parameters, like ```'/users/login?subsystem=something#LoginCall';```.
+
+**login.service.ts**
+
+```ts
+public login() {
+  const apiCall = new LoginCall({ username: ..., password: ...});
+  const result = this.apiCallerService.createApiResults(apiCall);
+  result.data$.subscribe(console.log); // succesful login response
+
+  this.apiCallerService.callApi(apiCall);
+}
+
+public logout() {
+  const apiCall = new LogoutCall();
+  const result = this.apiCallerService.createApiResults(apiCall);
+  result.success$.subscribe(console.log); // if you care about the result, you can subscribe on the success boolean
+
+  this.apiCallerService.callApi(apiCall);
+}
+```
+
+### Use streams in the template
+
+As api-caller is providing streams as the output of the calls, you can use them directly in the templates with ```async pipe```:
+
+**login-form.component.ts**
+
+```ts
+public ngOnInit(): void {
+  const apiCall = new LoginCall(); // note: we didn't passed any parameter to this, because the state identifier for login is not dependent on the payload, just the url + path
+  this.loginState = this.apiCallerService.createApiResults(apiCall);
+}
+
+public login() {
+  const apiCall = new LoginCall({ username: ..., password: ...});
+  this.apiCallerService.callApi(apiCall);
+}
+```
+**login-form.component.html**
+
+```html
+<div class="login">
+  <app-spinner *ngIf="loginState.loading$ | async"></app-spinner>
+  <div class="error" *ngIf="loginState.error$ | async">
+    {{ (loginState.errorData$ | async).status }}
+  </div>
+  ...
+</div>
+```
+
+## Future plans
+
+(vote with likes at [github issues](https://github.com/deejayy/api-caller/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement))
+
+- **caching**: don't fire an http request if there is already a response in the state. [Issue#1](https://github.com/deejayy/api-caller/issues/1)
+- **clear/reset state**: whatever value is in the state, clear it (both data and error) [Issue#2](https://github.com/deejayy/api-caller/issues/2)
+- **binary uploading**: attach files as payload to a request [Issue#3](https://github.com/deejayy/api-caller/issues/3)
+- **binary downloading**: in the case when the backend is not responding with a JSON object but a binary blob (eg. a file to download) [Issue#4](https://github.com/deejayy/api-caller/issues/4)
+- **custom auth method**: extend ApiConnector to provide authorization methods different from "Bearer" [Issue#5](https://github.com/deejayy/api-caller/issues/5)
+- **additional headers**: if you want to pass additional headers to the requests, globally or occasionally [Issue#6](https://github.com/deejayy/api-caller/issues/6)
+- **silent loading**: fire a request without changing the loading$ state, also introduce a new state which will anyway hold the fact that there is a request in progress [Issue#7](https://github.com/deejayy/api-caller/issues/7)
+
+## Troubleshooting
+
+Handled error messages you may bump into:
+
+**[@deejayy/api-caller] apiConnector not provided, check README.md**
+
+See [Advanced examples](#advanced-examples) section about how to configure the ```ApiConnector``` service.
+
+**[@deejayy/api-caller] Unhandled API error occurred, code:**
+
+This is an optional feature if you want to handle failed requests in a single place. Provide an ```errorHandler``` method in your ```ApiConnector``` service to catch these kind of errors (see [Advanced examples](#advanced-examples)). Eg. you can start a deauthenticate process on an HTTP 401.
+
+**Authorization: Bearer [@deejayy/api-caller] Can't send requests with authorization, token provider not found**
+
+You missed the ```tokenData$``` observable from your ```ApiConnector``` service, check [Advanced examples](#advanced-examples) on how to do it.
+
+## Ideas or issues
+
+Feel free to use the "Issues" section on github to tell me about anything you want to change.
+You can also fork the repo or open a pull request with your ideas or change suggestions.
+
+## Author
+
+[DeeJayy](https://github.com/deejayy), [@twitter](https://twitter.com/deejayyhu)
+
+## License
+
+This project is licensed under the MIT license.
