@@ -43,6 +43,7 @@ Both ```createApiResults()``` and ```callApi()``` method need the same parameter
 - ```path```: remaining part of the endpoint you want to call. It will be appended to the ```api``` property. Eg. ```path/to/call```
 - ```payload```: (optional) a JSON object which should be sent to the endpoint. Note: the request method will be ```GET``` without (or with an empty) ```payload``` value and will be ```POST``` if a valid one is supplied.
 - ```needsAuth```: (optional) determines whether the call needs authorization. If this is set to true, you must supply a token ```Observable``` to the module at import (see [Advanced examples](#advanced-examples))
+- ```useCache```: set this flag if you want to skip sending the backend request when there is a response already existing in the state
 
 ### Output
 
@@ -179,7 +180,7 @@ public login() {
 
 (vote with likes at [github issues](https://github.com/deejayy/api-caller/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement))
 
-- **caching**: don't fire an http request if there is already a response in the state. [Issue#1](https://github.com/deejayy/api-caller/issues/1)
+- ~**caching**: don't fire an http request if there is already a response in the state. [Issue#1](https://github.com/deejayy/api-caller/issues/1)~ (done [PR#9](https://github.com/deejayy/api-caller/pull/9))
 - **clear/reset state**: whatever value is in the state, clear it (both data and error) [Issue#2](https://github.com/deejayy/api-caller/issues/2)
 - **binary uploading**: attach files as payload to a request [Issue#3](https://github.com/deejayy/api-caller/issues/3)
 - **binary downloading**: in the case when the backend is not responding with a JSON object but a binary blob (eg. a file to download) [Issue#4](https://github.com/deejayy/api-caller/issues/4)
