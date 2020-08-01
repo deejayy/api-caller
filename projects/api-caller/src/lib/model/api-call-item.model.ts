@@ -3,6 +3,7 @@ export interface ApiCallItem {
   api?: string;
   payload?: any;
   needsAuth?: boolean;
+  useCache?: boolean;
 }
 
 export interface ApiInterface {

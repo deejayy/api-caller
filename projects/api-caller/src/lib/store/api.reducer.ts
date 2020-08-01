@@ -26,6 +26,16 @@ export function apiReducer(state: ApiState = initialApiCallerState, action: ApiA
         }
         break;
 
+      case ApiActionTypes.API_GET_FROM_CACHE:
+        stateId = getStateId(action.payload);
+        draft[stateId] = {
+          ...(draft[stateId] || initialApiCallerState),
+          loading: false,
+          error: false,
+          success: true,
+        }
+        break;
+
       case ApiActionTypes.API_GET_FAIL:
         stateId = getStateId(action.payload.request);
         draft[stateId] = {
