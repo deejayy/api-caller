@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { ApiCallItem, ApiInterface } from '../model/api-call-item.model';
 import { Store, select } from '@ngrx/store';
 import { ApiState, ApiResultState } from '../store/api.state';
-import { ApiGet } from '../store/api.actions';
+import { ApiGet, ApiClearState } from '../store/api.actions';
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import {
   isLoading,
@@ -41,6 +41,10 @@ export class ApiCallerService {
 
   public callApi(apiCallItem: ApiCallItem) {
     this.store.dispatch(new ApiGet(apiCallItem));
+  }
+
+  public resetApi(apiCallItem: ApiCallItem) {
+    this.store.dispatch(new ApiClearState(apiCallItem));
   }
 
   public createApiResults(apiCallItem: ApiCallItem): ApiResultState {

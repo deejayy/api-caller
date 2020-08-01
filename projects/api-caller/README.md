@@ -35,9 +35,21 @@ result.data$.subscribe(console.log);
 
 ### Input
 
-Both ```createApiResults()``` and ```callApi()``` method need the same parameter to be supplied: an ```ApiCallItem``` type of object.
+Methods ```createApiResults()```, ```callApi()``` and ```resetApi()``` need the same parameter to be supplied: an ```ApiCallItem``` type of object.
 
-**ApiCallItem** has the following properties
+**createApiResults() method**
+
+Used for setting up a variable which will hold the observables selected from the state for a particular API call. See examples.
+
+**callApi() method**
+
+Used for firing an actual API call. The HTTP request itself is also controlled via the ```useCache``` attribute, depending on the cache it may not be fired.
+
+**resetApi() method**
+
+Used for resetting the states for a particular API call.
+
+### ApiCallItem has the following properties
 
 - ```api```: (optional) the base url of the endpoints you want to use, eg. ```https://endpoint-url/api/v1/```. Defaults to ```/```, but check [Advanced examples](#advanced-examples) on how to set a different default.
 - ```path```: remaining part of the endpoint you want to call. It will be appended to the ```api``` property. Eg. ```path/to/call```

@@ -46,6 +46,11 @@ export function apiReducer(state: ApiState = initialApiCallerState, action: ApiA
           errorData: action.payload.response,
         }
         break;
+
+      case ApiActionTypes.API_CLEAR_STATE:
+        stateId = getStateId(action.payload);
+        draft[stateId] = initialApiCallerState;
+        break;
     }
   });
 }

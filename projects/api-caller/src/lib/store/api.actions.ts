@@ -6,6 +6,7 @@ export enum ApiActionTypes {
   API_GET_SUCCESS = '[API] Get Success',
   API_GET_FAIL = '[API] Get Fail',
   API_GET_FROM_CACHE = '[API] Get From Cache',
+  API_CLEAR_STATE = '[API] Get Clear State',
 }
 
 export class ApiGet implements Action {
@@ -28,4 +29,9 @@ export class ApiGetFail implements Action {
   constructor(public payload: ApiInterface) {}
 }
 
-export type ApiActions = ApiGet | ApiGetSuccess | ApiGetFail | ApiGetFromCache;
+export class ApiClearState implements Action {
+  public readonly type = ApiActionTypes.API_CLEAR_STATE;
+  constructor(public payload: ApiCallItem) {}
+}
+
+export type ApiActions = ApiGet | ApiGetSuccess | ApiGetFail | ApiGetFromCache | ApiClearState;
