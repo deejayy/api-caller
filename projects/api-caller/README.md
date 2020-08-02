@@ -56,6 +56,7 @@ Used for resetting the states for a particular API call.
 - ```payload```: (optional) a JSON object which should be sent to the endpoint. Note: the request method will be ```GET``` without (or with an empty) ```payload``` value and will be ```POST``` if a valid one is supplied.
 - ```needsAuth```: (optional) determines whether the call needs authorization. If this is set to true, you must supply a token ```Observable``` to the module at import (see [Advanced examples](#advanced-examples))
 - ```useCache```: set this flag if you want to skip sending the backend request when there is a response already existing in the state
+- ```binaryUpload```: string type parameter where you should pass the field name what the backend requires to upload files
 
 ### Output
 
@@ -133,13 +134,20 @@ export class LogoutCall implements ApiCallItem {
   public path: string = '/users/logout#LogoutCall';
   public needsAuth: boolean = true;
 }
+
+export class UploadCall implements ApiCallItem {
+  public path: string = '/files/upload#UploadCall';
+  public needsAuth: boolean = true;
+  public binaryUpload: string = 'files[]';
+  constructor(public payload: FileList) { }
+}
 ```
 
 Note the URI fragment (#LoginCall, #LogoutCall) at the end of the urls: with this, you can create unique states in the store and can call the same endpoint with different payloads or options. URI fragment is ignored by the HttpClient library, so your backend won't receive it.
 
 In case you want to distinguish the calls in the dev console's "Network" tab and you are calling the same endpoint for different use cases, you may want to use query parameters, like ```'/users/login?subsystem=something#LoginCall';```.
 
-**login.service.ts**
+**user.service.ts**
 
 ```ts
 public login() {
@@ -163,7 +171,7 @@ public logout() {
 
 As api-caller is providing streams as the output of the calls, you can use them directly in the templates with ```async pipe```:
 
-**login-form.component.ts**
+**user-form.component.ts**
 
 ```ts
 public ngOnInit(): void {
@@ -175,8 +183,14 @@ public login() {
   const apiCall = new LoginCall({ username: ..., password: ...});
   this.apiCallerService.callApi(apiCall);
 }
+
+public upload(fileControl: HTMLInputElement) {
+  const apiCallUpload = new UploadCall(fileControl.files);
+  this.apiCallerService.callApi(apiCallUpload);
+}
 ```
-**login-form.component.html**
+
+**user-form.component.html**
 
 ```html
 <div class="login">
@@ -185,6 +199,8 @@ public login() {
     {{ (loginState.errorData$ | async).status }}
   </div>
   ...
+  <input type="file" multiple #avatar>
+  <button (click)="upload(avatar)">Upload avatar</button>
 </div>
 ```
 
@@ -194,7 +210,7 @@ public login() {
 
 - ~**caching**: don't fire an http request if there is already a response in the state. [Issue#1](https://github.com/deejayy/api-caller/issues/1)~ (done [PR#9](https://github.com/deejayy/api-caller/pull/9))
 - ~**clear/reset state**: whatever value is in the state, clear it (both data and error) [Issue#2](https://github.com/deejayy/api-caller/issues/2)~ (done)
-- **binary uploading**: attach files as payload to a request [Issue#3](https://github.com/deejayy/api-caller/issues/3)
+- ~**binary uploading**: attach files as payload to a request [Issue#3](https://github.com/deejayy/api-caller/issues/3)~ (done)
 - **binary downloading**: in the case when the backend is not responding with a JSON object but a binary blob (eg. a file to download) [Issue#4](https://github.com/deejayy/api-caller/issues/4)
 - **custom auth method**: extend ApiConnector to provide authorization methods different from "Bearer" [Issue#5](https://github.com/deejayy/api-caller/issues/5)
 - **additional headers**: if you want to pass additional headers to the requests, globally or occasionally [Issue#6](https://github.com/deejayy/api-caller/issues/6)
@@ -212,9 +228,17 @@ See [Advanced examples](#advanced-examples) section about how to configure the `
 
 This is an optional feature if you want to handle failed requests in a single place. Provide an ```errorHandler``` method in your ```ApiConnector``` service to catch these kind of errors (see [Advanced examples](#advanced-examples)). Eg. you can start a deauthenticate process on an HTTP 401.
 
+**[@deejayy/api-caller] Unhandled API error occurred, code: 200**
+
+Although HTTP 200 is not an error, this could mean that the response from the backend is not a valid JSON, therefore it will go to the error branch. You can obtain the repsonse and get rid of errors when HTTP 200 is the response with ```binaryDownload``` (*upcoming*) feature.
+
 **Authorization: Bearer [@deejayy/api-caller] Can't send requests with authorization, token provider not found**
 
 You missed the ```tokenData$``` observable from your ```ApiConnector``` service, check [Advanced examples](#advanced-examples) on how to do it.
+
+**[@deejayy/api-caller] No file selected for upload but binaryUpload field name is set**
+
+You accidentally forgot to pass the FileList object to the ApiCall but you set the binaryUpload field name. See [Advanced examples](#advanced-examples). The request will be fired regardless of you provided valid file(s) or not.
 
 ## Ideas or issues
 

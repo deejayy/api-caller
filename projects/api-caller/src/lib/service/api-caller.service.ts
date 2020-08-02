@@ -40,6 +40,11 @@ export class ApiCallerService {
   }
 
   public callApi(apiCallItem: ApiCallItem) {
+    // Workaround to avoid "TypeError: Cannot freeze" error, native primitives (like FileList) cannot be passed to the state manager
+    // See: https://stackoverflow.com/a/53092520
+    if (apiCallItem.binaryUpload) {
+      apiCallItem.payload = apiCallItem.payload && apiCallItem.payload.length > 0 ? { ...apiCallItem.payload } : undefined;
+    }
     this.store.dispatch(new ApiGet(apiCallItem));
   }
 
@@ -64,6 +69,18 @@ export class ApiCallerService {
     const url = api + call.path;
     const options = { body: call.payload, headers: undefined };
     const headers = new HttpHeaders();
+
+    if (call.binaryUpload) {
+      if (call.payload) {
+        headers.append('Content-Type', 'application/x-www-form-urlencoded');
+        const formData: FormData = new FormData();
+        formData.append(call.binaryUpload, call.payload[0]);
+        options.body = formData;
+      } else {
+        console.warn(`[${apiStateId}] No file selected for upload but binaryUpload field name is set`);
+      }
+    }
+
     if (call.needsAuth) {
       return this.tokenData$.pipe(
         take(1),

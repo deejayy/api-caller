@@ -4,6 +4,7 @@ export interface ApiCallItem {
   payload?: any;
   needsAuth?: boolean;
   useCache?: boolean;
+  binaryUpload?: string;
 }
 
 export interface ApiInterface {
