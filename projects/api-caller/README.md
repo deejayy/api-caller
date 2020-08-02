@@ -193,7 +193,7 @@ public login() {
 (vote with likes at [github issues](https://github.com/deejayy/api-caller/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement))
 
 - ~**caching**: don't fire an http request if there is already a response in the state. [Issue#1](https://github.com/deejayy/api-caller/issues/1)~ (done [PR#9](https://github.com/deejayy/api-caller/pull/9))
-- **clear/reset state**: whatever value is in the state, clear it (both data and error) [Issue#2](https://github.com/deejayy/api-caller/issues/2)
+- ~**clear/reset state**: whatever value is in the state, clear it (both data and error) [Issue#2](https://github.com/deejayy/api-caller/issues/2)~ (done)
 - **binary uploading**: attach files as payload to a request [Issue#3](https://github.com/deejayy/api-caller/issues/3)
 - **binary downloading**: in the case when the backend is not responding with a JSON object but a binary blob (eg. a file to download) [Issue#4](https://github.com/deejayy/api-caller/issues/4)
 - **custom auth method**: extend ApiConnector to provide authorization methods different from "Bearer" [Issue#5](https://github.com/deejayy/api-caller/issues/5)
