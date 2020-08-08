@@ -12,6 +12,7 @@ export function apiReducer(state: ApiState = initialApiCallerState, action: ApiA
         draft[stateId] = {
           ...(draft[stateId] || initialApiCallerState),
           loading: true,
+          fired: new Date(),
         };
         break;
 
@@ -22,6 +23,7 @@ export function apiReducer(state: ApiState = initialApiCallerState, action: ApiA
           loading: false,
           error: false,
           success: true,
+          returned: new Date(),
           data: action.payload.response,
         }
         break;
@@ -43,6 +45,7 @@ export function apiReducer(state: ApiState = initialApiCallerState, action: ApiA
           loading: false,
           error: true,
           success: false,
+          returned: new Date(),
           errorData: action.payload.response,
         }
         break;

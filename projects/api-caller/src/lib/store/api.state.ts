@@ -7,6 +7,8 @@ export interface ApiState {
   error: boolean;
   data: any;
   errorData: HttpErrorResponse;
+  fired: Date;
+  returned: Date;
 }
 
 export interface ApiSubState {
@@ -27,4 +29,6 @@ export const initialApiCallerState: ApiState = {
   error: false,
   data: null,
   errorData: null,
+  fired: null,
+  returned: null,
 };

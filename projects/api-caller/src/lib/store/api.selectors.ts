@@ -13,4 +13,11 @@ export const getResponse = (stateId: string) => createSelector(getApiSubState(st
 export const getErrorData = (stateId: string) => createSelector(getApiSubState(stateId), (state: ApiState) => state.errorData);
 export const isFailed = (stateId: string) => createSelector(getApiSubState(stateId), (state: ApiState) => state.error);
 export const isSucceeded = (stateId: string) => createSelector(getApiSubState(stateId), (state: ApiState) => state.success);
-export const isCached = (stateId: string) => createSelector(getApiSubState(stateId), (state: ApiState) => state.data !== undefined && state.data !== null);
+export const isCached = (stateId: string, cacheTimeout?: number) => createSelector(getApiSubState(stateId), (state: ApiState) => {
+  if (state.returned && cacheTimeout) {
+    if (new Date().getTime() - state.returned.getTime() > cacheTimeout) {
+      return false;
+    }
+  }
+  return state.data !== undefined && state.data !== null;
+});

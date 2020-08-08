@@ -17,7 +17,7 @@ export class ApiEffects {
     ofType(ApiActionTypes.API_GET),
     mergeMap(({ payload }: ApiGet) => {
       const stateId = getStateId(payload);
-      return this.store.pipe(select(isCached(stateId))).pipe(
+      return this.store.pipe(select(isCached(stateId, payload.cacheTimeout))).pipe(
         take(1),
         mergeMap((isCached: boolean) => {
           if (payload.useCache && isCached) {
