@@ -56,6 +56,7 @@ Used for resetting the states for a particular API call.
 - ```payload```: (optional) a JSON object which should be sent to the endpoint. Note: the request method will be ```GET``` without (or with an empty) ```payload``` value and will be ```POST``` if a valid one is supplied.
 - ```needsAuth```: (optional) determines whether the call needs authorization. If this is set to true, you must supply a token ```Observable``` to the module at import (see [Advanced examples](#advanced-examples))
 - ```useCache```: set this flag if you want to skip sending the backend request when there is a response already existing in the state
+- ```cacheTimeout```: timeout for the cache in milliseconds, use in combination with ```useCache``` flag
 - ```binaryUpload```: string type parameter where you should pass the field name what the backend requires to upload files
 
 ### Output
