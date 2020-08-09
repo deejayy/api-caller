@@ -1,10 +1,10 @@
 import { Injectable, Optional } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { ApiCallItem, ApiInterface } from '../model/api-call-item.model';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ApiCallItem, ApiInterface, SimplifiedHttpOptions } from '../model/api-call-item.model';
 import { Store, select } from '@ngrx/store';
 import { ApiState, ApiResultState } from '../store/api.state';
 import { ApiGet, ApiClearState } from '../store/api.actions';
-import { Observable, of, BehaviorSubject } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
   isLoading,
   getStateId,
@@ -67,7 +67,7 @@ export class ApiCallerService {
     const method = call.payload ? 'POST' : 'GET';
     const api = call.api || this.defaultApiUrl;
     const url = api + call.path;
-    const options = { body: call.payload, headers: undefined };
+    const options: SimplifiedHttpOptions = { body: call.payload };
     const headers = new HttpHeaders();
 
     if (call.binaryUpload) {
@@ -79,6 +79,11 @@ export class ApiCallerService {
       } else {
         console.warn(`[${apiStateId}] No file selected for upload but binaryUpload field name is set`);
       }
+    }
+
+    if (call.binaryResponse) {
+      options.responseType = 'blob';
+      options.observe = 'response';
     }
 
     if (call.needsAuth) {

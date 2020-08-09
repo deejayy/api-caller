@@ -58,6 +58,7 @@ Used for resetting the states for a particular API call.
 - ```useCache```: set this flag if you want to skip sending the backend request when there is a response already existing in the state
 - ```cacheTimeout```: timeout for the cache in milliseconds, use in combination with ```useCache``` flag
 - ```binaryUpload```: string type parameter where you should pass the field name what the backend requires to upload files
+- ```binaryResponse```: if you know that the response will be a blob, set this to true
 
 ### Output
 
@@ -231,7 +232,7 @@ This is an optional feature if you want to handle failed requests in a single pl
 
 **[@deejayy/api-caller] Unhandled API error occurred, code: 200**
 
-Although HTTP 200 is not an error, this could mean that the response from the backend is not a valid JSON, therefore it will go to the error branch. You can obtain the repsonse and get rid of errors when HTTP 200 is the response with ```binaryDownload``` (*upcoming*) feature.
+Although HTTP 200 is not an error, this could mean that the response from the backend is not a valid JSON, therefore it will go to the error branch. You can obtain the repsonse and get rid of errors when HTTP 200 is the status with ```binaryResponse``` feature.
 
 **Authorization: Bearer [@deejayy/api-caller] Can't send requests with authorization, token provider not found**
 

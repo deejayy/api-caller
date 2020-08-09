@@ -1,3 +1,5 @@
+import { HttpHeaders, HttpParams } from '@angular/common/http';
+
 export type MilliSeconds = number;
 export type FieldName = string;
 
@@ -9,9 +11,20 @@ export interface ApiCallItem {
   useCache?: boolean;
   cacheTimeout?: MilliSeconds;
   binaryUpload?: FieldName;
+  binaryResponse?: boolean;
 }
 
 export interface ApiInterface {
   request: ApiCallItem;
   response: any;
 }
+
+export type SimplifiedHttpOptions = {
+  body?: any;
+  headers?: HttpHeaders;
+  observe?: 'body' | 'events' | 'response';
+  params?: HttpParams;
+  reportProgress?: boolean;
+  responseType?: 'arraybuffer' | 'blob' | 'json' | 'text';
+  withCredentials?: boolean;
+};
