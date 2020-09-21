@@ -53,7 +53,8 @@ Used for resetting the states for a particular API call.
 
 - ```api```: (optional) the base url of the endpoints you want to use, eg. ```https://endpoint-url/api/v1/```. Defaults to ```/```, but check [Advanced examples](#advanced-examples) on how to set a different default.
 - ```path```: remaining part of the endpoint you want to call. It will be appended to the ```api``` property. Eg. ```path/to/call```
-- ```payload```: (optional) a JSON object which should be sent to the endpoint. Note: the request method will be ```GET``` without (or with an empty) ```payload``` value and will be ```POST``` if a valid one is supplied.
+- ```payload```: (optional) a JSON object which should be sent to the endpoint. Note: the request method will be ```GET``` without (or with an empty) ```payload``` value and will be ```POST``` if a valid one is supplied. Method can be overridden with providing the ```method``` property (see below).
+- ```method```: (optional) method is by default determined based on payload, but you can override the HTTP method with this property.
 - ```needsAuth```: (optional) determines whether the call needs authorization. If this is set to true, you must supply a token ```Observable``` to the module at import (see [Advanced examples](#advanced-examples))
 - ```useCache```: set this flag if you want to skip sending the backend request when there is a response already existing in the state
 - ```cacheTimeout```: timeout for the cache in milliseconds, use in combination with ```useCache``` flag
@@ -213,10 +214,12 @@ public upload(fileControl: HTMLInputElement) {
 - ~**caching**: don't fire an http request if there is already a response in the state. [Issue#1](https://github.com/deejayy/api-caller/issues/1)~ (done [PR#9](https://github.com/deejayy/api-caller/pull/9))
 - ~**clear/reset state**: whatever value is in the state, clear it (both data and error) [Issue#2](https://github.com/deejayy/api-caller/issues/2)~ (done)
 - ~**binary uploading**: attach files as payload to a request [Issue#3](https://github.com/deejayy/api-caller/issues/3)~ (done)
-- **binary downloading**: in the case when the backend is not responding with a JSON object but a binary blob (eg. a file to download) [Issue#4](https://github.com/deejayy/api-caller/issues/4)
+- ~**binary downloading**: in the case when the backend is not responding with a JSON object but a binary blob (eg. a file to download) [Issue#4](https://github.com/deejayy/api-caller/issues/4)~ (done)
 - **custom auth method**: extend ApiConnector to provide authorization methods different from "Bearer" [Issue#5](https://github.com/deejayy/api-caller/issues/5)
 - **additional headers**: if you want to pass additional headers to the requests, globally or occasionally [Issue#6](https://github.com/deejayy/api-caller/issues/6)
 - **silent loading**: fire a request without changing the loading$ state, also introduce a new state which will anyway hold the fact that there is a request in progress [Issue#7](https://github.com/deejayy/api-caller/issues/7)
+- **polling**: set an interval to regularly fetch backend response
+- **append**: when a request is fired again, append the result to the previous response.
 
 ## Troubleshooting
 

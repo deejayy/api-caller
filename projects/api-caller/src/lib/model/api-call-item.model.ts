@@ -12,6 +12,7 @@ export interface ApiCallItem {
   cacheTimeout?: MilliSeconds;
   binaryUpload?: FieldName;
   binaryResponse?: boolean;
+  method?: string;
 }
 
 export interface ApiInterface {

@@ -64,7 +64,7 @@ export class ApiCallerService {
   }
 
   public makeRequest(call: ApiCallItem): Observable<any> {
-    const method = call.payload ? 'POST' : 'GET';
+    const method = call.method || (call.payload ? 'POST' : 'GET');
     const api = call.api || this.defaultApiUrl;
     const url = api + call.path;
     const options: SimplifiedHttpOptions = { body: call.payload };
