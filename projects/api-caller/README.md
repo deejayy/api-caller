@@ -215,11 +215,13 @@ public upload(fileControl: HTMLInputElement) {
 - ~**clear/reset state**: whatever value is in the state, clear it (both data and error) [Issue#2](https://github.com/deejayy/api-caller/issues/2)~ (done)
 - ~**binary uploading**: attach files as payload to a request [Issue#3](https://github.com/deejayy/api-caller/issues/3)~ (done)
 - ~**binary downloading**: in the case when the backend is not responding with a JSON object but a binary blob (eg. a file to download) [Issue#4](https://github.com/deejayy/api-caller/issues/4)~ (done)
+- ~**methods**: ability to change the HTTP method other than the automatically determined GET and POST~
 - **custom auth method**: extend ApiConnector to provide authorization methods different from "Bearer" [Issue#5](https://github.com/deejayy/api-caller/issues/5)
 - **additional headers**: if you want to pass additional headers to the requests, globally or occasionally [Issue#6](https://github.com/deejayy/api-caller/issues/6)
 - **silent loading**: fire a request without changing the loading$ state, also introduce a new state which will anyway hold the fact that there is a request in progress [Issue#7](https://github.com/deejayy/api-caller/issues/7)
 - **polling**: set an interval to regularly fetch backend response
-- **append**: when a request is fired again, append the result to the previous response.
+- **append**: when a request is fired again, append the result to the previous response. Optional append logic method may be passed to it.
+- **refresh in background**: if caching is turned on, do a re-fetch in the background, compare the result and update on change. Could receive an optional comparator function if the response is changing anyway (eg. sent timestamp). ```keepUpdated```
 
 ## Troubleshooting
 
