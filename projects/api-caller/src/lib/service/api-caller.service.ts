@@ -1,20 +1,14 @@
-import { Injectable, Optional } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ApiCallItem, ApiInterface, SimplifiedHttpOptions } from '../model/api-call-item.model';
-import { Store, select } from '@ngrx/store';
-import { ApiState, ApiResultState } from '../store/api.state';
-import { ApiGet, ApiClearState } from '../store/api.actions';
+import { Injectable, Optional } from '@angular/core';
+import { select, Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
-import {
-  isLoading,
-  getStateId,
-  getResponse,
-  getErrorData,
-  isFailed,
-  isSucceeded,
-} from '../store/api.selectors';
 import { mergeMap, take } from 'rxjs/operators';
+
+import { ApiCallItem, ApiInterface, SimplifiedHttpOptions } from '../model/api-call-item.model';
 import { apiStateId } from '../model/api-state-id';
+import { ApiClearState, ApiGet } from '../store/api.actions';
+import { getErrorData, getResponse, getStateId, isFailed, isLoading, isSucceeded } from '../store/api.selectors';
+import { ApiResultState, ApiState } from '../store/api.state';
 import { ApiConnector } from './api-connector';
 
 @Injectable()
@@ -34,9 +28,13 @@ export class ApiCallerService {
       console.warn(`[${apiStateId}] apiConnector not provided, check README.md`);
     } else {
       this.tokenData$ = apiConnector.tokenData$ || this.tokenData$;
-      this.defaultApiUrl = apiConnector.defaultApiUrl || this.defaultApiUrl;
+      this.defaultApiUrl = this.getDefaultApiUrl();
       this.errorHandler = apiConnector.errorHandler || this.errorHandler;
     }
+  }
+
+  public getDefaultApiUrl(): string {
+    return this.apiConnector.defaultApiUrl || this.defaultApiUrl;
   }
 
   public callApi(apiCallItem: ApiCallItem) {
@@ -65,7 +63,7 @@ export class ApiCallerService {
 
   public makeRequest(call: ApiCallItem): Observable<any> {
     const method = call.method || (call.payload ? 'POST' : 'GET');
-    const api = call.api || this.defaultApiUrl;
+    const api = call.api || this.getDefaultApiUrl();
     const url = api + call.path;
     const options: SimplifiedHttpOptions = { body: call.payload };
     const headers = new HttpHeaders();
