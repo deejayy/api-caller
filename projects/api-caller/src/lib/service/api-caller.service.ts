@@ -27,14 +27,22 @@ export class ApiCallerService {
     if (!this.apiConnector) {
       console.warn(`[${apiStateId}] apiConnector not provided, check README.md`);
     } else {
-      this.tokenData$ = apiConnector.tokenData$ || this.tokenData$;
+      this.tokenData$ = this.getTokenData();
       this.defaultApiUrl = this.getDefaultApiUrl();
-      this.errorHandler = apiConnector.errorHandler || this.errorHandler;
+      this.errorHandler = this.getErrorHandler();
     }
   }
 
   public getDefaultApiUrl(): string {
     return this.apiConnector.defaultApiUrl || this.defaultApiUrl;
+  }
+
+  public getTokenData(): Observable<string> {
+    return this.apiConnector.tokenData$ || this.tokenData$;
+  }
+
+  public getErrorHandler(): Function {
+    return this.apiConnector.errorHandler || this.errorHandler;
   }
 
   public callApi(apiCallItem: ApiCallItem) {
@@ -85,7 +93,7 @@ export class ApiCallerService {
     }
 
     if (call.needsAuth) {
-      return this.tokenData$.pipe(
+      return this.getTokenData().pipe(
         take(1),
         mergeMap((token) => {
           options.headers = headers.set('Authorization', `Bearer ${token}`);
@@ -98,6 +106,6 @@ export class ApiCallerService {
   }
 
   public handleError(payload: ApiInterface) {
-    return this.errorHandler(payload);
+    return this.getErrorHandler()(payload);
   }
 }
