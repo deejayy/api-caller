@@ -6,8 +6,8 @@ import { mergeMap, take } from 'rxjs/operators';
 
 import { ApiCallItem, ApiInterface, SimplifiedHttpOptions } from '../model/api-call-item.model';
 import { apiStateId } from '../model/api-state-id';
-import { ApiClearState, ApiGet } from '../store/api.actions';
-import { getErrorData, getResponse, getStateId, isFailed, isLoading, isSucceeded } from '../store/api.selectors';
+import { ApiActions } from '../store/api.actions';
+import { ApiSelectors, getStateId } from '../store/api.selectors';
 import { ApiResultState, ApiState } from '../store/api.state';
 import { ApiConnector } from './api-connector';
 
@@ -51,21 +51,21 @@ export class ApiCallerService {
     if (apiCallItem.binaryUpload) {
       apiCallItem.payload = apiCallItem.payload && apiCallItem.payload.length > 0 ? { ...apiCallItem.payload } : undefined;
     }
-    this.store.dispatch(new ApiGet(apiCallItem));
+    this.store.dispatch(ApiActions.ApiGet({ payload: apiCallItem }));
   }
 
   public resetApi(apiCallItem: ApiCallItem) {
-    this.store.dispatch(new ApiClearState(apiCallItem));
+    this.store.dispatch(ApiActions.ApiClearState({ payload: apiCallItem }));
   }
 
   public createApiResults(apiCallItem: ApiCallItem): ApiResultState {
     const stateId = getStateId(apiCallItem);
     return {
-      loading$: this.store.pipe(select(isLoading(stateId))),
-      data$: this.store.pipe(select(getResponse(stateId))),
-      errorData$: this.store.pipe(select(getErrorData(stateId))),
-      error$: this.store.pipe(select(isFailed(stateId))),
-      success$: this.store.pipe(select(isSucceeded(stateId))),
+      loading$: this.store.pipe(select(ApiSelectors.isLoading(stateId))),
+      data$: this.store.pipe(select(ApiSelectors.getResponse(stateId))),
+      errorData$: this.store.pipe(select(ApiSelectors.getErrorData(stateId))),
+      error$: this.store.pipe(select(ApiSelectors.isFailed(stateId))),
+      success$: this.store.pipe(select(ApiSelectors.isSucceeded(stateId))),
     };
   }
 

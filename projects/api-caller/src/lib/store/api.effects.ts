@@ -1,47 +1,63 @@
-import { Injectable } from '@angular/core';
-import { Actions, ofType, Effect } from '@ngrx/effects';
-import { ApiCallerService } from '../service/api-caller.service';
-import { ApiActions, ApiActionTypes, ApiGet, ApiGetSuccess, ApiGetFail, ApiGetFromCache } from './api.actions';
-import { Observable } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
-import { of } from 'rxjs';
-import { mergeMap, map, catchError, withLatestFrom, take } from 'rxjs/operators';
-import { Store, select } from '@ngrx/store';
-import { isCached, getStateId } from './api.selectors';
+import { Injectable } from '@angular/core';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { select, Store } from '@ngrx/store';
+import { Observable, of } from 'rxjs';
+import { catchError, map, mergeMap, take } from 'rxjs/operators';
+
+import { ApiCallerService } from '../service/api-caller.service';
+import { ApiActions } from './api.actions';
+import { ApiSelectors, getStateId } from './api.selectors';
 import { ApiState } from './api.state';
 
 @Injectable()
 export class ApiEffects {
-  @Effect()
-  public getApi$: Observable<ApiActions> = this.actions$.pipe(
-    ofType(ApiActionTypes.API_GET),
-    mergeMap(({ payload }: ApiGet) => {
-      const stateId = getStateId(payload);
-      return this.store.pipe(select(isCached(stateId, payload.cacheTimeout))).pipe(
-        take(1),
-        mergeMap((isCached: boolean) => {
-          if (payload.useCache && isCached) {
-            return of(new ApiGetFromCache(payload));
-          } else {
-            return this.apiService.makeRequest(payload).pipe(
-              map((data: object) => new ApiGetSuccess({ request: payload, response: data })),
-              catchError((error: HttpErrorResponse) => of(new ApiGetFail({ request: payload, response: error })))
-            );
-          }
-        })
-      )
-    })
+  public getApi$: Observable<ApiActions> = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ApiActions.ApiGet),
+      mergeMap(({ payload }) => {
+        const stateId = getStateId(payload);
+        return this.store
+          .pipe(select(ApiSelectors.isCached(stateId, payload.cacheTimeout)))
+          .pipe(
+            take(1),
+            mergeMap((isCached: boolean) => {
+              if (payload.useCache && isCached) {
+                return of(ApiActions.ApiGetFromCache({ payload }));
+              } else {
+                return this.apiService.makeRequest(payload).pipe(
+                  map((data: object) =>
+                    ApiActions.ApiGetSuccess({
+                      request: payload,
+                      response: data,
+                    })
+                  ),
+                  catchError((error: HttpErrorResponse) =>
+                    of(
+                      ApiActions.ApiGetFail({
+                        request: payload,
+                        response: error,
+                      })
+                    )
+                  )
+                );
+              }
+            })
+          );
+      })
+    )
   );
 
-  @Effect({ dispatch: false })
-  public getApiFail$: Observable<ApiGetFail> = this.actions$.pipe(
-    ofType(ApiActionTypes.API_GET_FAIL),
-    map((action: ApiGetFail) => this.apiService.handleError(action.payload))
+  public getApiFail$: Observable<void> = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ApiActions.ApiGetFail),
+      map((action) => this.apiService.handleError(action))
+    )
   );
 
   constructor(
     private actions$: Actions,
     private apiService: ApiCallerService,
-    private store: Store<ApiState>,
+    private store: Store<ApiState>
   ) {}
 }

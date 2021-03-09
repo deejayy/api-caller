@@ -1,59 +1,57 @@
-import { ApiState, initialApiCallerState } from './api.state';
-import { ApiActions, ApiActionTypes } from './api.actions';
-import { produce } from 'immer';
+import { Action, createReducer } from '@ngrx/store';
+
+import { produceOn } from '../helper/produce-on';
+import { ApiActions } from './api.actions';
 import { getStateId } from './api.selectors';
+import { ApiState, initialApiCallerState } from './api.state';
 
-export function apiReducer(state: ApiState = initialApiCallerState, action: ApiActions): ApiState {
-  return produce(state, (draft: ApiState) => {
-    let stateId;
-    switch (action.type) {
-      case ApiActionTypes.API_GET:
-        stateId = getStateId(action.payload);
-        draft[stateId] = {
-          ...(draft[stateId] || initialApiCallerState),
-          loading: true,
-          fired: new Date(),
-        };
-        break;
-
-      case ApiActionTypes.API_GET_SUCCESS:
-        stateId = getStateId(action.payload.request);
-        draft[stateId] = {
-          ...(draft[stateId] || initialApiCallerState),
-          loading: false,
-          error: false,
-          success: true,
-          returned: new Date(),
-          data: action.payload.response,
-        }
-        break;
-
-      case ApiActionTypes.API_GET_FROM_CACHE:
-        stateId = getStateId(action.payload);
-        draft[stateId] = {
-          ...(draft[stateId] || initialApiCallerState),
-          loading: false,
-          error: false,
-          success: true,
-        }
-        break;
-
-      case ApiActionTypes.API_GET_FAIL:
-        stateId = getStateId(action.payload.request);
-        draft[stateId] = {
-          ...(draft[stateId] || initialApiCallerState),
-          loading: false,
-          error: true,
-          success: false,
-          returned: new Date(),
-          errorData: action.payload.response,
-        }
-        break;
-
-      case ApiActionTypes.API_CLEAR_STATE:
-        stateId = getStateId(action.payload);
-        draft[stateId] = initialApiCallerState;
-        break;
+const reducer = createReducer(
+  initialApiCallerState,
+  produceOn(ApiActions.ApiGet, (draft, action) => {
+    const stateId = getStateId(action.payload);
+    draft[stateId] = {
+      ...(draft[stateId] || initialApiCallerState),
+      loading: true,
+      fired: new Date(),
+    };
+  }),
+  produceOn(ApiActions.ApiGetSuccess, (draft, action) => {
+    const stateId = getStateId(action.request);
+    draft[stateId] = {
+      ...(draft[stateId] || initialApiCallerState),
+      loading: false,
+      error: false,
+      success: true,
+      returned: new Date(),
+      data: action.response,
     }
-  });
-}
+  }),
+  produceOn(ApiActions.ApiGetFail, (draft, action) => {
+    const stateId = getStateId(action.request);
+    draft[stateId] = {
+      ...(draft[stateId] || initialApiCallerState),
+      loading: false,
+      error: true,
+      success: false,
+      returned: new Date(),
+      errorData: action.response,
+    }
+  }),
+  produceOn(ApiActions.ApiGetFromCache, (draft, action) => {
+    const stateId = getStateId(action.payload);
+    draft[stateId] = {
+      ...(draft[stateId] || initialApiCallerState),
+      loading: false,
+      error: false,
+      success: true,
+    }
+  }),
+  produceOn(ApiActions.ApiClearState, (draft, action) => {
+    const stateId = getStateId(action.payload);
+    draft[stateId] = initialApiCallerState;
+  }),
+);
+
+export const apiReducer = (state: ApiState, action: Action): ApiState => {
+  return reducer(state, action);
+};

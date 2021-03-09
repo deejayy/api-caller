@@ -1,37 +1,11 @@
-import { Action } from '@ngrx/store';
+import { createAction, props } from '@ngrx/store';
+
 import { ApiCallItem, ApiInterface } from '../model/api-call-item.model';
 
-export enum ApiActionTypes {
-  API_GET = '[API] Get',
-  API_GET_SUCCESS = '[API] Get Success',
-  API_GET_FAIL = '[API] Get Fail',
-  API_GET_FROM_CACHE = '[API] Get From Cache',
-  API_CLEAR_STATE = '[API] Get Clear State',
+export class ApiActions {
+  public static ApiGet = createAction('[API] Get', props<{ payload: ApiCallItem }>());
+  public static ApiGetSuccess = createAction('[API] Get Success', props<ApiInterface>());
+  public static ApiGetFail = createAction('[API] Get Fail', props<ApiInterface>());
+  public static ApiGetFromCache = createAction('[API] Get From Cache', props<{ payload: ApiCallItem }>());
+  public static ApiClearState = createAction('[API] Clear State', props<{ payload: ApiCallItem }>());
 }
-
-export class ApiGet implements Action {
-  public readonly type = ApiActionTypes.API_GET;
-  constructor(public payload: ApiCallItem) {}
-}
-
-export class ApiGetSuccess implements Action {
-  public readonly type = ApiActionTypes.API_GET_SUCCESS;
-  constructor(public payload: ApiInterface) {}
-}
-
-export class ApiGetFromCache implements Action {
-  public readonly type = ApiActionTypes.API_GET_FROM_CACHE;
-  constructor(public payload: ApiCallItem) {}
-}
-
-export class ApiGetFail implements Action {
-  public readonly type = ApiActionTypes.API_GET_FAIL;
-  constructor(public payload: ApiInterface) {}
-}
-
-export class ApiClearState implements Action {
-  public readonly type = ApiActionTypes.API_CLEAR_STATE;
-  constructor(public payload: ApiCallItem) {}
-}
-
-export type ApiActions = ApiGet | ApiGetSuccess | ApiGetFail | ApiGetFromCache | ApiClearState;
