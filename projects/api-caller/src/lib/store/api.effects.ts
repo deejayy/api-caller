@@ -52,7 +52,8 @@ export class ApiEffects {
     this.actions$.pipe(
       ofType(ApiActions.ApiGetFail),
       map((action) => this.apiService.handleError(action))
-    )
+    ),
+    { dispatch: false }
   );
 
   constructor(
