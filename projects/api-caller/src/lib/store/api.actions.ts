@@ -8,4 +8,5 @@ export class ApiActions {
   public static ApiGetFail = createAction('[API] Get Fail', props<ApiInterface>());
   public static ApiGetFromCache = createAction('[API] Get From Cache', props<{ payload: ApiCallItem }>());
   public static ApiClearState = createAction('[API] Clear State', props<{ payload: ApiCallItem }>());
+  public static ApiClearAllState = createAction('[API] Clear Full State');
 }

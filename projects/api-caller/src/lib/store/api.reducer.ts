@@ -6,7 +6,7 @@ import { getStateId } from './api.selectors';
 import { ApiState, initialApiCallerState } from './api.state';
 
 const reducer = createReducer(
-  initialApiCallerState,
+  {},
   produceOn(ApiActions.ApiGet, (draft, action) => {
     const stateId = getStateId(action.payload);
     draft[stateId] = {
@@ -50,8 +50,9 @@ const reducer = createReducer(
     const stateId = getStateId(action.payload);
     draft[stateId] = initialApiCallerState;
   }),
+  produceOn(ApiActions.ApiClearAllState, () => ({})),
 );
 
-export const apiReducer = (state: ApiState, action: Action): ApiState => {
+export const apiReducer = (state: ApiState, action: Action): ApiState | {} => {
   return reducer(state, action);
 };

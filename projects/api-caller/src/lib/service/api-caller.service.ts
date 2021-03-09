@@ -33,16 +33,25 @@ export class ApiCallerService {
     }
   }
 
-  public getDefaultApiUrl(): string {
+  private getDefaultApiUrl(): string {
     return this.apiConnector.defaultApiUrl || this.defaultApiUrl;
   }
 
-  public getTokenData(): Observable<string> {
+  private getTokenData(): Observable<string> {
     return this.apiConnector.tokenData$ || this.tokenData$;
   }
 
-  public getErrorHandler(): Function {
+  private getErrorHandler(): Function {
     return this.apiConnector.errorHandler || this.errorHandler;
+  }
+
+  private getApiCallPayload(apiCallItem: ApiCallItem) {
+    return {
+      payload: {
+        ...apiCallItem,
+        api: apiCallItem.api || this.getDefaultApiUrl(),
+      },
+    };
   }
 
   public callApi(apiCallItem: ApiCallItem) {
@@ -51,11 +60,17 @@ export class ApiCallerService {
     if (apiCallItem.binaryUpload) {
       apiCallItem.payload = apiCallItem.payload && apiCallItem.payload.length > 0 ? { ...apiCallItem.payload } : undefined;
     }
-    this.store.dispatch(ApiActions.ApiGet({ payload: apiCallItem }));
+    this.store.dispatch(
+      ApiActions.ApiGet(this.getApiCallPayload(apiCallItem)),
+    );
   }
 
   public resetApi(apiCallItem: ApiCallItem) {
-    this.store.dispatch(ApiActions.ApiClearState({ payload: apiCallItem }));
+    this.store.dispatch(ApiActions.ApiClearState(this.getApiCallPayload(apiCallItem)));
+  }
+
+  public resetAllApi() {
+    this.store.dispatch(ApiActions.ApiClearAllState());
   }
 
   public createApiResults(apiCallItem: ApiCallItem): ApiResultState {
@@ -71,7 +86,7 @@ export class ApiCallerService {
 
   public makeRequest(call: ApiCallItem): Observable<any> {
     const method = call.method || (call.payload ? 'POST' : 'GET');
-    const api = call.api || this.getDefaultApiUrl();
+    const api = call.api;
     const url = api + call.path;
     const options: SimplifiedHttpOptions = { body: call.payload };
     const headers = new HttpHeaders();
