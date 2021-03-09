@@ -53,6 +53,6 @@ const reducer = createReducer(
   produceOn(ApiActions.ApiClearAllState, () => ({})),
 );
 
-export const apiReducer = (state: ApiState, action: Action): ApiState | {} => {
+export function apiReducer(state: ApiState, action: Action): ApiState | {} {
   return reducer(state, action);
 };
