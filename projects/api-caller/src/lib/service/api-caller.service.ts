@@ -34,15 +34,15 @@ export class ApiCallerService {
   }
 
   private getDefaultApiUrl(): string {
-    return this.apiConnector.defaultApiUrl || this.defaultApiUrl;
+    return this.apiConnector?.defaultApiUrl || this.defaultApiUrl;
   }
 
   private getTokenData(): Observable<string> {
-    return this.apiConnector.tokenData$ || this.tokenData$;
+    return this.apiConnector?.tokenData$ || this.tokenData$;
   }
 
   private getErrorHandler(): Function {
-    return this.apiConnector.errorHandler || this.errorHandler;
+    return this.apiConnector?.errorHandler || this.errorHandler;
   }
 
   private getApiCallPayload(apiCallItem: ApiCallItem) {
