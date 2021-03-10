@@ -74,7 +74,7 @@ export class ApiCallerService {
   }
 
   public createApiResults(apiCallItem: ApiCallItem): ApiResultState {
-    const stateId = getStateId(apiCallItem);
+    const stateId = getStateId(this.getApiCallPayload(apiCallItem).payload);
     return {
       loading$: this.store.pipe(select(ApiSelectors.isLoading(stateId))),
       data$: this.store.pipe(select(ApiSelectors.getResponse(stateId))),
