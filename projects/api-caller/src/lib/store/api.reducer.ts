@@ -12,6 +12,8 @@ const reducer = createReducer(
     draft[stateId] = {
       ...(draft[stateId] || initialApiCallerState),
       loading: true,
+      error: false,
+      success: false,
       fired: new Date(),
     };
   }),
