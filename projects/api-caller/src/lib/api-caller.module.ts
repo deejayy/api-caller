@@ -16,8 +16,6 @@ import { apiStateId } from './model/api-state-id';
     StoreModule.forFeature(apiStateId, apiReducer),
     EffectsModule.forFeature([ApiEffects]),
   ],
-  providers: [
-    ApiCallerService,
-  ],
+  providers: [ApiCallerService],
 })
 export class ApiCallerModule {}

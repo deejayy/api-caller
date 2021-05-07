@@ -26,7 +26,7 @@ const reducer = createReducer(
       success: true,
       returned: new Date(),
       data: action.response,
-    }
+    };
   }),
   produceOn(ApiActions.ApiGetFail, (draft, action) => {
     const stateId = getStateId(action.request);
@@ -37,7 +37,7 @@ const reducer = createReducer(
       success: false,
       returned: new Date(),
       errorData: action.response,
-    }
+    };
   }),
   produceOn(ApiActions.ApiGetFromCache, (draft, action) => {
     const stateId = getStateId(action.payload);
@@ -46,7 +46,7 @@ const reducer = createReducer(
       loading: false,
       error: false,
       success: true,
-    }
+    };
   }),
   produceOn(ApiActions.ApiClearState, (draft, action) => {
     const stateId = getStateId(action.payload);
@@ -57,4 +57,4 @@ const reducer = createReducer(
 
 export function apiReducer(state: ApiState, action: Action): ApiState | {} {
   return reducer(state, action);
-};
+}

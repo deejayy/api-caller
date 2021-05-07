@@ -17,48 +17,43 @@ export class ApiEffects {
       ofType(ApiActions.ApiGet),
       mergeMap(({ payload }) => {
         const stateId = getStateId(payload);
-        return this.store
-          .pipe(select(ApiSelectors.isCached(stateId, payload.cacheTimeout)))
-          .pipe(
-            take(1),
-            mergeMap((isCached: boolean) => {
-              if (payload.useCache && isCached) {
-                return of(ApiActions.ApiGetFromCache({ payload }));
-              } else {
-                return this.apiService.makeRequest(payload).pipe(
-                  map((data: object) =>
-                    ApiActions.ApiGetSuccess({
+        return this.store.pipe(select(ApiSelectors.isCached(stateId, payload.cacheTimeout))).pipe(
+          take(1),
+          mergeMap((isCached: boolean) => {
+            if (payload.useCache && isCached) {
+              return of(ApiActions.ApiGetFromCache({ payload }));
+            } else {
+              return this.apiService.makeRequest(payload).pipe(
+                map((data: object) =>
+                  ApiActions.ApiGetSuccess({
+                    request: payload,
+                    response: data,
+                  }),
+                ),
+                catchError((error: HttpErrorResponse) =>
+                  of(
+                    ApiActions.ApiGetFail({
                       request: payload,
-                      response: data,
-                    })
+                      response: error,
+                    }),
                   ),
-                  catchError((error: HttpErrorResponse) =>
-                    of(
-                      ApiActions.ApiGetFail({
-                        request: payload,
-                        response: error,
-                      })
-                    )
-                  )
-                );
-              }
-            })
-          );
-      })
-    )
-  );
-
-  public getApiFail$: Observable<void> = createEffect(() =>
-    this.actions$.pipe(
-      ofType(ApiActions.ApiGetFail),
-      map((action) => this.apiService.handleError(action))
+                ),
+              );
+            }
+          }),
+        );
+      }),
     ),
-    { dispatch: false }
   );
 
-  constructor(
-    private actions$: Actions,
-    private apiService: ApiCallerService,
-    private store: Store<ApiState>
-  ) {}
+  public getApiFail$: Observable<void> = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(ApiActions.ApiGetFail),
+        map((action) => this.apiService.handleError(action)),
+      ),
+    { dispatch: false },
+  );
+
+  constructor(private actions$: Actions, private apiService: ApiCallerService, private store: Store<ApiState>) {}
 }
