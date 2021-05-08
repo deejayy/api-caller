@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import { HttpEventType, HttpHeaders } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
@@ -22,6 +22,7 @@ class CustomApiConnector extends ApiConnector {
 
 describe('ApiCallerService', () => {
   let service: ApiCallerService;
+  let httpMock: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -30,6 +31,11 @@ describe('ApiCallerService', () => {
     });
 
     service = TestBed.inject(ApiCallerService);
+    httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    httpMock.verify();
   });
 
   it('should be created', () => {
@@ -133,6 +139,50 @@ describe('ApiCallerService', () => {
     );
     expect(result.get('Content-Type')).toEqual('application/x-www-form-urlencoded');
     expect(JSON.stringify(options)).toEqual('{"body":{}}');
+  });
+
+  it('makeRequest GET', (done) => {
+    const result = service.makeRequest({
+      api: 'http://localhost',
+      path: '/',
+    });
+    result.subscribe((v) => {
+      expect(v).toEqual({ flushed: true });
+      done();
+    });
+    const req = httpMock.expectOne('http://localhost/');
+    expect(req.request.method).toEqual('GET');
+    req.flush({ flushed: true });
+  });
+
+  it('makeRequest DELETE', (done) => {
+    const result = service.makeRequest({
+      api: 'http://localhost',
+      path: '/',
+      method: 'DELETE',
+    });
+    result.subscribe((v) => {
+      expect(v).toEqual({ flushed: true });
+      done();
+    });
+    const req = httpMock.expectOne('http://localhost/');
+    expect(req.request.method).toEqual('DELETE');
+    req.flush({ flushed: true });
+  });
+
+  it('makeRequest POST (implicit)', (done) => {
+    const result = service.makeRequest({
+      api: 'http://localhost',
+      path: '/',
+      payload: {},
+    });
+    result.subscribe((v) => {
+      expect(v).toEqual({ flushed: true });
+      done();
+    });
+    const req = httpMock.expectOne('http://localhost/');
+    expect(req.request.method).toEqual('POST');
+    req.flush({ flushed: true });
   });
 });
 
