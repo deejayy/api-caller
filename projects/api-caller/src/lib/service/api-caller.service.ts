@@ -13,9 +13,9 @@ import { ApiConnector } from './api-connector';
 
 @Injectable()
 export class ApiCallerService {
-  private tokenData$: Observable<string> = of(`[${apiStateId}] Can't send requests with authorization, token provider not found`);
-  private defaultApiUrl: string = '/';
-  private errorHandler: Function = (payload: ApiInterface) => {
+  public tokenData$: Observable<string> = of(`[${apiStateId}] Can't send requests with authorization, token provider not found`);
+  public defaultApiUrl: string = '/';
+  public errorHandler: Function = (payload: ApiInterface) => {
     console.warn(`[${apiStateId}] Unhandled API error occurred, code: ${payload.response.status}`);
   };
 
@@ -33,19 +33,19 @@ export class ApiCallerService {
     }
   }
 
-  private getDefaultApiUrl(): string {
+  public getDefaultApiUrl(): string {
     return this.apiConnector?.defaultApiUrl || this.defaultApiUrl;
   }
 
-  private getTokenData(): Observable<string> {
+  public getTokenData(): Observable<string> {
     return this.apiConnector?.tokenData$ || this.tokenData$;
   }
 
-  private getErrorHandler(): Function {
+  public getErrorHandler(): Function {
     return this.apiConnector?.errorHandler || this.errorHandler;
   }
 
-  private getApiCallPayload(apiCallItem: ApiCallItem) {
+  public getApiCallPayload(apiCallItem: ApiCallItem) {
     return {
       payload: {
         ...apiCallItem,
@@ -84,11 +84,7 @@ export class ApiCallerService {
     };
   }
 
-  public makeRequest(call: ApiCallItem): Observable<any> {
-    const method = call.method || (call.payload ? 'POST' : 'GET');
-    const api = call.api;
-    const url = api + call.path;
-    const options: SimplifiedHttpOptions = { body: call.payload };
+  public makeHeaders(call: ApiCallItem, options: SimplifiedHttpOptions) {
     const headers = new HttpHeaders();
 
     if (call.binaryUpload) {
@@ -101,6 +97,16 @@ export class ApiCallerService {
         console.warn(`[${apiStateId}] No file selected for upload but binaryUpload field name is set`);
       }
     }
+
+    return headers;
+  }
+
+  public makeRequest(call: ApiCallItem): Observable<any> {
+    const method = call.method || (call.payload ? 'POST' : 'GET');
+    const api = call.api;
+    const url = api + call.path;
+    const options: SimplifiedHttpOptions = { body: call.payload };
+    const headers = this.makeHeaders(call, options);
 
     if (call.binaryResponse) {
       options.responseType = 'blob';
