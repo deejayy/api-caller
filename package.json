@@ -36,15 +36,31 @@
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
+    "@angular-builders/jest": "^11.1.1",
     "@angular-devkit/build-angular": "^0.1002",
     "@angular-devkit/build-ng-packagr": "^0.1002",
+    "@angular-eslint/builder": "1.2.0",
+    "@angular-eslint/eslint-plugin": "1.2.0",
+    "@angular-eslint/eslint-plugin-template": "1.2.0",
+    "@angular-eslint/schematics": "1.2.0",
+    "@angular-eslint/template-parser": "1.2.0",
     "@angular/cli": "^10.0.0",
     "@angular/compiler-cli": "^10.0.0",
+    "@types/jest": "^26.0.20",
     "@types/node": "^12.20.0",
+    "@typescript-eslint/eslint-plugin": "4.3.0",
+    "@typescript-eslint/parser": "4.3.0",
     "codelyzer": "^6.0.0",
+    "eslint": "^7.6.0",
+    "eslint-plugin-import": "2.22.1",
+    "eslint-plugin-jsdoc": "30.7.6",
+    "eslint-plugin-no-null": "latest",
+    "eslint-plugin-prefer-arrow": "1.2.2",
+    "jest": "^26.6.3",
+    "jest-html-reporter": "^3.3.0",
+    "jest-preset-angular": "^8.3.2",
     "ng-packagr": "^9.0.0",
     "ts-node": "~8.3.0",
-    "tslint": "~6.1.0",
     "typescript": "~4.0.2"
   }
 }

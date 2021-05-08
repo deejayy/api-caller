@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpHeaders, HttpParams, HttpResponseBase } from '@angular/common/http';
 
 export type MilliSeconds = number;
 export type FieldName = string;
@@ -18,7 +18,7 @@ export interface ApiCallItem {
 
 export interface ApiInterface {
   request: ApiCallItem;
-  response: any;
+  response: HttpResponseBase;
 }
 
 export type SimplifiedHttpOptions = {

@@ -1,4 +1,4 @@
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpResponseBase } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
@@ -24,7 +24,7 @@ export class ApiEffects {
               return of(ApiActions.ApiGetFromCache({ payload }));
             } else {
               return this.apiService.makeRequest(payload).pipe(
-                map((data: object) =>
+                map((data: HttpResponseBase) =>
                   ApiActions.ApiGetSuccess({
                     request: payload,
                     response: data,

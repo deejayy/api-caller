@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponseBase } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
@@ -15,7 +15,7 @@ import { ApiConnector } from './api-connector';
 export class ApiCallerService {
   public tokenData$: Observable<string> = of(`[${apiStateId}] Can't send requests with authorization, token provider not found`);
   public defaultApiUrl: string = '/';
-  public errorHandler: Function = (payload: ApiInterface) => {
+  public errorHandler: (payload: ApiInterface) => void = (payload: ApiInterface) => {
     console.warn(`[${apiStateId}] Unhandled API error occurred, code: ${payload.response.status}`);
   };
 
@@ -41,7 +41,7 @@ export class ApiCallerService {
     return this.apiConnector?.tokenData$ || this.tokenData$;
   }
 
-  public getErrorHandler(): Function {
+  public getErrorHandler(): (payload: ApiInterface) => void {
     return this.apiConnector?.errorHandler || this.errorHandler;
   }
 
@@ -101,7 +101,7 @@ export class ApiCallerService {
     return headers;
   }
 
-  public makeRequest(call: ApiCallItem): Observable<any> {
+  public makeRequest(call: ApiCallItem): Observable<HttpResponseBase> {
     const method = call.method || (call.payload ? 'POST' : 'GET');
     const api = call.api;
     const url = api + call.path;
@@ -119,7 +119,7 @@ export class ApiCallerService {
         mergeMap((token) => {
           options.headers = headers.set('Authorization', `Bearer ${token}`);
           return this.http.request(method, url, options);
-        })
+        }),
       );
     } else {
       return this.http.request(method, url, options);
