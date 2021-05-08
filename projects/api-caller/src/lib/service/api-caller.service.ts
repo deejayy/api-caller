@@ -85,11 +85,11 @@ export class ApiCallerService {
   }
 
   public makeHeaders(call: ApiCallItem, options: SimplifiedHttpOptions) {
-    const headers = new HttpHeaders();
+    let headers = new HttpHeaders();
 
     if (call.binaryUpload) {
       if (call.payload) {
-        headers.append('Content-Type', 'application/x-www-form-urlencoded');
+        headers = headers.append('Content-Type', 'application/x-www-form-urlencoded');
         const formData: FormData = new FormData();
         formData.append(call.binaryUpload, call.payload[0]);
         options.body = formData;

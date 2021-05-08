@@ -9,4 +9,5 @@ module.exports = {
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupJest.ts'],
   moduleDirectories: ['node_modules', 'src'],
+  transformIgnorePatterns: ['node_modules'],
 };

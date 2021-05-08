@@ -7,7 +7,11 @@ import { ApiState, ApiSubState, initialApiCallerState } from './api.state';
 export const getStateId = (payload: ApiCallItem) => `${payload.api}${payload.path}`;
 
 const getApiState = createFeatureSelector<ApiSubState>(apiStateId);
-const getApiSubState = (stateId: string) => createSelector(getApiState, (state: ApiSubState) => state[stateId] || initialApiCallerState);
+const getApiSubState = (stateId: string) => createSelector(getApiState, (state: ApiSubState) =>
+  state && state[stateId]
+    ? state[stateId]
+    : initialApiCallerState,
+);
 
 export class ApiSelectors {
   public static isLoading = (stateId: string) => createSelector(getApiSubState(stateId), (state: ApiState) => state.loading);
