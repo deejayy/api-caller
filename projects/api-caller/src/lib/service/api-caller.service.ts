@@ -45,6 +45,10 @@ export class ApiCallerService {
     return this.apiConnector?.errorHandler || this.errorHandler;
   }
 
+  public handleError(payload: ApiInterface) {
+    return this.getErrorHandler()(payload);
+  }
+
   public getApiCallPayload(apiCallItem: ApiCallItem) {
     return {
       payload: {
@@ -124,9 +128,5 @@ export class ApiCallerService {
     } else {
       return this.http.request(method, url, options);
     }
-  }
-
-  public handleError(payload: ApiInterface) {
-    return this.getErrorHandler()(payload);
   }
 }

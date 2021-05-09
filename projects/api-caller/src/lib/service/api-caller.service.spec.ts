@@ -1,12 +1,12 @@
 /* eslint-disable max-lines-per-function */
-import { HttpEventType, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpEventType, HttpHeaders } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
-import { SimplifiedHttpOptions } from '../model/api-call-item.model';
 
+import { SimplifiedHttpOptions } from '../model/api-call-item.model';
 import { ApiEffects } from '../store/api.effects';
 import { apiReducer } from '../store/api.reducer';
 import { ApiCallerService } from './api-caller.service';
@@ -18,6 +18,12 @@ class CustomApiConnector extends ApiConnector {
     console.error('Handled in CustomApiConnector');
   };
   public tokenData$ = of('custom injected token');
+}
+
+class MockHttpClient {
+  public request = jest.fn(() => {
+    return of('true');
+  });
 }
 
 describe('ApiCallerService', () => {
@@ -188,14 +194,20 @@ describe('ApiCallerService', () => {
 
 describe('ApiCallerService with Connector', () => {
   let service: ApiCallerService;
+  let httpMock;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, StoreModule.forRoot([apiReducer]), EffectsModule.forRoot([ApiEffects])],
-      providers: [ApiCallerService, { provide: ApiConnector, useClass: CustomApiConnector }],
+      imports: [StoreModule.forRoot([apiReducer]), EffectsModule.forRoot([ApiEffects])],
+      providers: [
+        ApiCallerService,
+        { provide: ApiConnector, useClass: CustomApiConnector },
+        { provide: HttpClient, useClass: MockHttpClient },
+      ],
     });
 
     service = TestBed.inject(ApiCallerService);
+    httpMock = TestBed.inject(HttpClient);
   });
 
   it('should be created', () => {
@@ -298,5 +310,64 @@ describe('ApiCallerService with Connector', () => {
     );
     expect(result.get('Content-Type')).toEqual('application/x-www-form-urlencoded');
     expect(JSON.stringify(options)).toEqual('{"body":{}}');
+  });
+
+  it('makeRequests GET', () => {
+    service.makeRequest({
+      api: 'http://localhost',
+      path: '/',
+    }).subscribe();
+    expect(httpMock.request).toBeCalledWith('GET', 'http://localhost/', { body: undefined });
+  });
+
+  it('makeRequests binaryResponse', () => {
+    service.makeRequest({
+      api: 'http://localhost',
+      path: '/',
+      binaryResponse: true,
+    }).subscribe();
+    expect(httpMock.request).toBeCalledWith('GET', 'http://localhost/', {
+      body: undefined,
+      responseType: 'blob',
+      observe: 'response',
+    });
+  });
+
+  it('makeRequests POST (implicit)', () => {
+    service.makeRequest({
+      api: 'http://localhost',
+      path: '/',
+      payload: { pay: 'load' },
+    }).subscribe();
+    expect(httpMock.request).toBeCalledWith('POST', 'http://localhost/', { body: { pay: 'load' } });
+  });
+
+  it('makeRequests DELETE', () => {
+    service.makeRequest({
+      api: 'http://localhost',
+      path: '/',
+      method: 'DELETE',
+    }).subscribe();
+    expect(httpMock.request).toBeCalledWith('DELETE', 'http://localhost/', { body: undefined });
+  });
+
+  it('makeRequests DELETE w/ payload', () => {
+    service.makeRequest({
+      api: 'http://localhost',
+      path: '/',
+      method: 'DELETE',
+      payload: { pay: 'load' },
+    }).subscribe();
+    expect(httpMock.request).toBeCalledWith('DELETE', 'http://localhost/', { body: { pay: 'load' } });
+  });
+
+  it('makeRequests needsAuth', () => {
+    const headers = new HttpHeaders().set('Authorization', 'Bearer custom injected token');
+    service.makeRequest({
+      api: 'http://localhost',
+      path: '/',
+      needsAuth: true,
+    }).subscribe();
+    expect(httpMock.request).toBeCalledWith('GET', 'http://localhost/', { body: undefined, headers: headers });
   });
 });
