@@ -4,11 +4,14 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed } from '@angular/core/testing';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { cold } from 'jest-marbles';
 import { of } from 'rxjs';
 
 import { SimplifiedHttpOptions } from '../model/api-call-item.model';
 import { ApiEffects } from '../store/api.effects';
 import { apiReducer } from '../store/api.reducer';
+import { initialApiCallerState } from '../store/api.state';
 import { ApiCallerService } from './api-caller.service';
 import { ApiConnector } from './api-connector';
 
@@ -29,14 +32,17 @@ class MockHttpClient {
 describe('ApiCallerService', () => {
   let service: ApiCallerService;
   let httpMock: HttpTestingController;
+  let store: MockStore;
+  const initialState = { '@deejayy/api-caller': { '/': initialApiCallerState } };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, StoreModule.forRoot([apiReducer]), EffectsModule.forRoot([ApiEffects])],
-      providers: [ApiCallerService],
+      imports: [HttpClientTestingModule],
+      providers: [ApiCallerService, provideMockStore({ initialState })],
     });
 
     service = TestBed.inject(ApiCallerService);
+    store = TestBed.inject(MockStore);
     httpMock = TestBed.inject(HttpTestingController);
   });
 
@@ -189,6 +195,48 @@ describe('ApiCallerService', () => {
     const req = httpMock.expectOne('http://localhost/');
     expect(req.request.method).toEqual('POST');
     req.flush({ flushed: true });
+  });
+
+  it('should reset api', () => {
+    service.resetApi({ path: '/' });
+    const expected = cold('a', { a: { payload: { path: '/', api: '/' }, type: '[API] Clear State' } });
+    expect(store.scannedActions$).toBeObservable(expected);
+  });
+
+  it('should reset all api', () => {
+    service.resetAllApi();
+    const expected = cold('a', { a: { type: '[API] Clear Full State' } });
+    expect(store.scannedActions$).toBeObservable(expected);
+  });
+
+  it('should call api', () => {
+    service.callApi({ path: '/' });
+    const expected = cold('a', { a: { payload: { path: '/', api: '/' }, type: '[API] Get' } });
+    expect(store.scannedActions$).toBeObservable(expected);
+  });
+
+  it('should call api with binary', () => {
+    service.callApi({ path: '/', binaryUpload: 'fileField', payload: ['a'] });
+    const expected = cold('a', {
+      a: { payload: { path: '/', api: '/', binaryUpload: 'fileField', payload: { 0: 'a' } }, type: '[API] Get' },
+    });
+    expect(store.scannedActions$).toBeObservable(expected);
+  });
+
+  it('should call api with binary missing payload', () => {
+    service.callApi({ path: '/', binaryUpload: 'fileField' });
+    const expected = cold('a', {
+      a: { payload: { path: '/', api: '/', binaryUpload: 'fileField', payload: undefined }, type: '[API] Get' },
+    });
+    expect(store.scannedActions$).toBeObservable(expected);
+  });
+
+  it('should call api with payload', () => {
+    service.callApi({ path: '/', payload: ['a'] });
+    const expected = cold('a', {
+      a: { payload: { path: '/', api: '/', payload: ['a'] }, type: '[API] Get' },
+    });
+    expect(store.scannedActions$).toBeObservable(expected);
   });
 });
 
@@ -369,5 +417,14 @@ describe('ApiCallerService with Connector', () => {
       needsAuth: true,
     }).subscribe();
     expect(httpMock.request).toBeCalledWith('GET', 'http://localhost/', { body: undefined, headers: headers });
+  });
+
+  it('handleError', () => {
+    console.error = jest.fn();
+    service.handleError({
+      request: null,
+      response: { status: 410, headers: null, ok: false, statusText: '', type: HttpEventType.Response, url: '' },
+    });
+    expect(console.error).toBeCalledWith('Handled in CustomApiConnector');
   });
 });

@@ -55,6 +55,7 @@ const reducer = createReducer(
   produceOn(ApiActions.ApiClearAllState, () => ({})),
 );
 
-export const apiReducer = (state: ApiState, action: Action): ApiState | unknown => {
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
+export function apiReducer (state: ApiState, action: Action): ApiState | unknown {
   return reducer(state, action);
-};
+}
