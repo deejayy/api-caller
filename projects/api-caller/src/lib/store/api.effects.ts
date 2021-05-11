@@ -5,6 +5,7 @@ import { select, Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, take } from 'rxjs/operators';
 
+import { ApiCallItem } from '../model/api-call-item.model';
 import { ApiCallerService } from '../service/api-caller.service';
 import { ApiActions } from './api.actions';
 import { ApiSelectors, getStateId } from './api.selectors';
@@ -12,38 +13,33 @@ import { ApiState } from './api.state';
 
 @Injectable()
 export class ApiEffects {
+  private handleSuccess(request: ApiCallItem) {
+    return (response: HttpResponseBase) => ApiActions.ApiGetSuccess({ request, response });
+  }
+
+  private handleError(request: ApiCallItem) {
+    return (response: HttpErrorResponse) => of(ApiActions.ApiGetFail({ request, response }));
+  }
+
+  private mergeWithCache(request: ApiCallItem) {
+    return (isCached: boolean) => {
+      return request.useCache && isCached
+        ? of(ApiActions.ApiGetFromCache({ payload: request }))
+        : this.apiService
+            .makeRequest(request)
+            .pipe(map(this.handleSuccess(request)), catchError(this.handleError(request)));
+    };
+  }
+
+  private getApiEffect = ({ payload }) => {
+    const stateId = getStateId(payload);
+    return this.store
+      .pipe(select(ApiSelectors.isCached(stateId, payload.cacheTimeout)))
+      .pipe(take(1), mergeMap(this.mergeWithCache(payload)));
+  };
+
   public getApi$: Observable<ApiActions> = createEffect(() =>
-    this.actions$.pipe(
-      ofType(ApiActions.ApiGet),
-      mergeMap(({ payload }) => {
-        const stateId = getStateId(payload);
-        return this.store.pipe(select(ApiSelectors.isCached(stateId, payload.cacheTimeout))).pipe(
-          take(1),
-          mergeMap((isCached: boolean) => {
-            if (payload.useCache && isCached) {
-              return of(ApiActions.ApiGetFromCache({ payload }));
-            } else {
-              return this.apiService.makeRequest(payload).pipe(
-                map((data: HttpResponseBase) =>
-                  ApiActions.ApiGetSuccess({
-                    request: payload,
-                    response: data,
-                  }),
-                ),
-                catchError((error: HttpErrorResponse) =>
-                  of(
-                    ApiActions.ApiGetFail({
-                      request: payload,
-                      response: error,
-                    }),
-                  ),
-                ),
-              );
-            }
-          }),
-        );
-      }),
-    ),
+    this.actions$.pipe(ofType(ApiActions.ApiGet), mergeMap(this.getApiEffect)),
   );
 
   public getApiFail$: Observable<void> = createEffect(
