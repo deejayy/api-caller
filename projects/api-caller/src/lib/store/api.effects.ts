@@ -13,15 +13,15 @@ import { ApiState } from './api.state';
 
 @Injectable()
 export class ApiEffects {
-  private handleSuccess(request: ApiCallItem) {
+  public handleSuccess(request: ApiCallItem) {
     return (response: HttpResponseBase) => ApiActions.ApiGetSuccess({ request, response });
   }
 
-  private handleError(request: ApiCallItem) {
+  public handleError(request: ApiCallItem) {
     return (response: HttpErrorResponse) => of(ApiActions.ApiGetFail({ request, response }));
   }
 
-  private mergeWithCache(request: ApiCallItem) {
+  public mergeWithCache(request: ApiCallItem) {
     return (isCached: boolean) => {
       return request.useCache && isCached
         ? of(ApiActions.ApiGetFromCache({ payload: request }))
@@ -31,7 +31,7 @@ export class ApiEffects {
     };
   }
 
-  private getApiEffect = ({ payload }) => {
+  public getApiEffect = ({ payload }) => {
     const stateId = getStateId(payload);
     return this.store
       .pipe(select(ApiSelectors.isCached(stateId, payload.cacheTimeout)))
