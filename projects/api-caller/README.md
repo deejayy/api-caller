@@ -24,6 +24,21 @@ imports: [
 
 **Start using:**
 
+Pick the first meaningful result and forget about the rest.
+
+```ts
+this.apiCallerService
+  .callApi<DataModel[]>({ api: 'https://endpoint-url/api/v1/', path: 'path/to/call' })
+  .data$.pipe(
+    filter((v: DataModel[]) => v?.length > 0),
+    take(1),
+  ).subscribe(
+    (v: DataModel[]) => console.log(v[0]),
+  );
+```
+
+-- or --
+
 ```ts
 const apiCall = { api: 'https://endpoint-url/api/v1/', path: 'path/to/call' };
 const result = this.apiCallerService.createApiResults(apiCall);
@@ -35,25 +50,29 @@ result.data$.subscribe(console.log);
 
 ### Input
 
-Methods ```createApiResults()```, ```callApi()``` and ```resetApi()``` need the same parameter to be supplied: an ```ApiCallItem``` type of object.
+Methods ```createApiResults<T>()```, ```callApi()``` and ```resetApi()``` need the same parameter to be supplied: an ```ApiCallItem``` type of object.
 
-**createApiResults() method**
+**`createApiResults<T>()` method**
 
-Used for setting up a variable which will hold the observables selected from the state for a particular API call. See examples.
+Used for setting up a variable which will hold the observables selected from the state for a particular API call. Accepts a T type which later will assigned to data$ stream. See examples.
 
-**callApi() method**
+**`callApi()` method**
 
 Used for firing an actual API call. The HTTP request itself is also controlled via the ```useCache``` attribute, depending on the cache it may not be fired.
 
-**resetApi() method**
+**`resetApi()` method**
 
 Used for resetting the states for a particular API call.
+
+**`resetAllApi()` method**
+
+Used for resetting the states for all of earlier fired API calls.
 
 ### ApiCallItem has the following properties
 
 - ```api```: (optional) the base url of the endpoints you want to use, eg. ```https://endpoint-url/api/v1/```. Defaults to ```/```, but check [Advanced examples](#advanced-examples) on how to set a different default.
 - ```path```: remaining part of the endpoint you want to call. It will be appended to the ```api``` property. Eg. ```path/to/call```
-- ```payload```: (optional) a JSON object which should be sent to the endpoint. Note: the request method will be ```GET``` without (or with an empty) ```payload``` value and will be ```POST``` if a valid one is supplied. Method can be overridden with providing the ```method``` property (see below).
+- ```payload```: (optional) a JSON object which should be sent to the endpoint. Note: the request method will be ```GET``` without (or with an empty) ```payload``` value and will be ```POST``` if a valid one is supplied. Method can be overridden by providing the ```method``` property (see below).
 - ```method```: (optional) method is by default determined based on payload, but you can override the HTTP method with this property.
 - ```needsAuth```: (optional) determines whether the call needs authorization. If this is set to true, you must supply a token ```Observable``` to the module at import (see [Advanced examples](#advanced-examples))
 - ```useCache```: set this flag if you want to skip sending the backend request when there is a response already existing in the state
@@ -63,13 +82,14 @@ Used for resetting the states for a particular API call.
 
 ### Output
 
-Outputs are essentially provided as streams which are returned in an ```ApiResultState``` object. You can count on the following:
+Outputs are essentially provided as streams which are returned in an ```ApiResultState<T>``` object. You can expect the following:
 
-- ```data$```: most important observable, which will holds the response from the backend endpoint on a successful call
+- ```data$```: most important observable, which will holds the response from the backend endpoint on a successful call, type T assigned with ```createApiResults<T>()``` method.
 - ```errorData$```: if there were an error making the request, the ```HttpErrorResponse``` type of object will be in this observable
 - ```loading$```: this state is set to ```true``` right before initiating an ```HttpClient``` request, and set to ```false``` when the call is finished (regardless of success or failure). Useful for displaying a loading spinner when this is true.
-- ```success$```: boolean state set to true on successful call
-- ```error$```: boolean state set to true on a failed call
+- ```success$```: boolean state returns true on successful call
+- ```error$```: boolean state returns true on a failed call
+- ```finished$```: boolean state returns true on a finished call (either success or error is set)
 
 ## Advanced examples
 
