@@ -58,7 +58,7 @@ export class ApiCallerService {
     };
   }
 
-  public callApi(apiCallItem: ApiCallItem) {
+  public callApi<ResponseType>(apiCallItem: ApiCallItem): ApiResultState<ResponseType> {
     // Workaround to avoid "TypeError: Cannot freeze" error, native primitives (like FileList) cannot be passed to the state manager
     // See: https://stackoverflow.com/a/53092520
     if (apiCallItem.binaryUpload) {
@@ -67,6 +67,7 @@ export class ApiCallerService {
     this.store.dispatch(
       ApiActions.ApiGet(this.getApiCallPayload(apiCallItem)),
     );
+    return this.createApiResults<ResponseType>(apiCallItem);
   }
 
   public resetApi(apiCallItem: ApiCallItem) {
@@ -77,7 +78,7 @@ export class ApiCallerService {
     this.store.dispatch(ApiActions.ApiClearAllState());
   }
 
-  public createApiResults(apiCallItem: ApiCallItem): ApiResultState {
+  public createApiResults<ResponseType>(apiCallItem: ApiCallItem): ApiResultState<ResponseType> {
     const stateId = getStateId(this.getApiCallPayload(apiCallItem).payload);
     return {
       loading$: this.store.pipe(select(ApiSelectors.isLoading(stateId))),
@@ -85,6 +86,7 @@ export class ApiCallerService {
       errorData$: this.store.pipe(select(ApiSelectors.getErrorData(stateId))),
       error$: this.store.pipe(select(ApiSelectors.isFailed(stateId))),
       success$: this.store.pipe(select(ApiSelectors.isSucceeded(stateId))),
+      finished$: this.store.pipe(select(ApiSelectors.isFinished(stateId))),
     };
   }
 
