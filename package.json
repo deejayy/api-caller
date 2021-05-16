@@ -4,12 +4,11 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "prebuild": "cd projects/api-caller && npm version prerelease -no-git-tag-version",
     "build": "ng build api-caller --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "release": "npm publish dist/api-caller/ --access public"
+    "release": "ng lint && ng test && ng build --prod api-caller && npm publish dist/api-caller/ --access public"
   },
   "private": false,
   "np": {
