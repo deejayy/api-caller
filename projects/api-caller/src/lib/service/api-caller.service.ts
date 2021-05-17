@@ -46,7 +46,11 @@ export class ApiCallerService {
   }
 
   public handleError(payload: ApiInterface) {
-    return this.getErrorHandler()(payload);
+    if (!payload.request?.localErrorHandling) {
+      return this.getErrorHandler()(payload);
+    } else {
+      return 'Handled locally';
+    }
   }
 
   public getApiCallPayload(apiCallItem: ApiCallItem) {

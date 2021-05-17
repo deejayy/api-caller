@@ -42,7 +42,7 @@ export class ApiEffects {
     this.actions$.pipe(ofType(ApiActions.ApiGet), mergeMap(this.getApiEffect)),
   );
 
-  public getApiFail$: Observable<void> = createEffect(
+  public getApiFail$: Observable<void | string> = createEffect(
     () =>
       this.actions$.pipe(
         ofType(ApiActions.ApiGetFail),

@@ -79,6 +79,7 @@ Used for resetting the states for all of earlier fired API calls.
 - ```cacheTimeout```: timeout for the cache in milliseconds, use in combination with ```useCache``` flag
 - ```binaryUpload```: string type parameter where you should pass the field name what the backend requires to upload files
 - ```binaryResponse```: if you know that the response will be a blob, set this to true
+- ```localErrorHandling```: the service normally calls the error handler defined in the `ApiConnector`, but if you don't want it to be triggered, set this flag to true. In this case, you still have the error information in the `error$` and `errorData$` streams.
 
 ### Output
 

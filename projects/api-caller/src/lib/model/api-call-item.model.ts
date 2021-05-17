@@ -14,6 +14,7 @@ export interface ApiCallItem {
   binaryUpload?: FieldName;
   binaryResponse?: boolean;
   method?: string;
+  localErrorHandling?: boolean;
 }
 
 export interface ApiInterface {

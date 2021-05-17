@@ -1,6 +1,6 @@
 {
   "name": "@deejayy/api-caller",
-  "version": "1.6.6",
+  "version": "1.6.7",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -8,6 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
+    "prerelease": "ng lint && ng test && ng build --prod api-caller",
     "release": "ng lint && ng test && ng build --prod api-caller && npm publish dist/api-caller/ --access public"
   },
   "private": false,

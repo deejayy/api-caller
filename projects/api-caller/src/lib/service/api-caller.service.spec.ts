@@ -427,4 +427,13 @@ describe('ApiCallerService with Connector', () => {
     });
     expect(console.error).toBeCalledWith('Handled in CustomApiConnector');
   });
+
+  it('handleError with local error handling', () => {
+    console.error = jest.fn();
+    const result = service.handleError({
+      request: { path: undefined, localErrorHandling: true },
+      response: { status: 410, headers: null, ok: false, statusText: '', type: HttpEventType.Response, url: '' },
+    });
+    expect(result).toEqual('Handled locally');
+  });
 });
