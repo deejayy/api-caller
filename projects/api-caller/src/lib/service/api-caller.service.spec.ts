@@ -15,6 +15,8 @@ import { initialApiCallerState } from '../store/api.state';
 import { ApiCallerService } from './api-caller.service';
 import { ApiConnector } from './api-connector';
 
+import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
+
 class CustomApiConnector extends ApiConnector {
   public defaultApiUrl = '/api/';
   public errorHandler = () => {
@@ -36,6 +38,9 @@ describe('ApiCallerService', () => {
   const initialState = { '@deejayy/api-caller': { '/': initialApiCallerState } };
 
   beforeEach(() => {
+    TestBed.resetTestEnvironment();
+    TestBed.initTestEnvironment(BrowserDynamicTestingModule, platformBrowserDynamicTesting());
+
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [ApiCallerService, provideMockStore({ initialState })],
