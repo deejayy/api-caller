@@ -3,7 +3,7 @@ import { Action, createReducer } from '@ngrx/store';
 import { produceOn } from '../helper/produce-on';
 import { ApiActions } from './api.actions';
 import { getStateId } from './api.selectors';
-import { ApiState, initialApiCallerState } from './api.state';
+import { ApiState, initialApiCallerState, initialApiCallerGlobalState, GlobalApiState } from './api.state';
 
 export const apiGet = (draft, action) => {
   const stateId = getStateId(action.payload);
@@ -58,7 +58,7 @@ export const apiClearState = (draft, action) => {
 export const apiClearAllState = () => ({});
 
 const reducer = createReducer(
-  {},
+  initialApiCallerGlobalState,
   produceOn(ApiActions.ApiGet, apiGet),
   produceOn(ApiActions.ApiGetSuccess, apiGetSuccess),
   produceOn(ApiActions.ApiGetFail, apiGetFail),
@@ -68,6 +68,6 @@ const reducer = createReducer(
 );
 
 // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
-export function apiReducer(state: ApiState, action: Action): ApiState | unknown {
+export function apiReducer(state: GlobalApiState, action: Action): ApiState | unknown {
   return reducer(state, action);
 }
