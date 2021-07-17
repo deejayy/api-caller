@@ -12,7 +12,7 @@ export interface ApiState {
   returned: Date;
 }
 
-export interface ApiSubState {
+export interface GlobalApiState {
   [key: string]: ApiState;
 }
 
@@ -24,6 +24,8 @@ export interface ApiResultState<T = any> {
   data$: Observable<T>;
   errorData$: Observable<HttpErrorResponse>;
 }
+
+export const initialApiCallerGlobalState: GlobalApiState = {};
 
 export const initialApiCallerState: ApiState = {
   loading: false,

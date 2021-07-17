@@ -2,13 +2,13 @@ import { createFeatureSelector, createSelector } from '@ngrx/store';
 
 import { ApiCallItem } from '../model/api-call-item.model';
 import { apiStateId } from '../model/api-state-id';
-import { ApiState, ApiSubState, initialApiCallerState } from './api.state';
+import { ApiState, GlobalApiState, initialApiCallerState } from './api.state';
 
-export const getStateId = (payload: ApiCallItem) => `${payload.api}${payload.path}`;
+export const getStateId = (payload: ApiCallItem): string => `${payload.api}${payload.path}`;
 
-const getApiState = createFeatureSelector<ApiSubState>(apiStateId);
+const getApiState = createFeatureSelector<GlobalApiState>(apiStateId);
 const getApiSubState = (stateId: string) =>
-  createSelector(getApiState, (state: ApiSubState) =>
+  createSelector(getApiState, (state: GlobalApiState) =>
     state && state[stateId] ? state[stateId] : initialApiCallerState,
   );
 

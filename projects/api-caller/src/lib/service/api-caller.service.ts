@@ -10,6 +10,7 @@ import { ApiActions } from '../store/api.actions';
 import { ApiSelectors, getStateId } from '../store/api.selectors';
 import { ApiResultState, ApiState } from '../store/api.state';
 import { ApiConnector } from './api-connector';
+import { Payload } from '../helper/payload.model';
 
 @Injectable()
 export class ApiCallerService {
@@ -53,7 +54,7 @@ export class ApiCallerService {
     }
   }
 
-  public getApiCallPayload(apiCallItem: ApiCallItem) {
+  public getApiCallPayload(apiCallItem: ApiCallItem): Payload<ApiCallItem> {
     return {
       payload: {
         ...apiCallItem,
