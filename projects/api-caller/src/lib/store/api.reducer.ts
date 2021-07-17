@@ -1,11 +1,16 @@
 import { Action, createReducer } from '@ngrx/store';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Draft } from 'immer';
 
 import { produceOn } from '../helper/produce-on';
+import { Payload } from '../helper/payload.model';
+import { ApiCallItem } from '../model/api-call-item.model';
+import { ApiInterface } from '../model/api-call-item.model';
 import { ApiActions } from './api.actions';
 import { getStateId } from './api.selectors';
 import { ApiState, initialApiCallerState, initialApiCallerGlobalState, GlobalApiState } from './api.state';
 
-export const apiGet = (draft, action) => {
+export const apiGet = (draft: Draft<GlobalApiState>, action: Payload<ApiCallItem>) => {
   const stateId = getStateId(action.payload);
   draft[stateId] = {
     ...(draft[stateId] || initialApiCallerState),
@@ -16,7 +21,7 @@ export const apiGet = (draft, action) => {
   };
 };
 
-export const apiGetSuccess = (draft, action) => {
+export const apiGetSuccess = (draft: Draft<GlobalApiState>, action: ApiInterface) => {
   const stateId = getStateId(action.request);
   draft[stateId] = {
     ...(draft[stateId] || initialApiCallerState),
@@ -28,7 +33,7 @@ export const apiGetSuccess = (draft, action) => {
   };
 };
 
-export const apiGetFail = (draft, action) => {
+export const apiGetFail = (draft: Draft<GlobalApiState>, action: ApiInterface) => {
   const stateId = getStateId(action.request);
   draft[stateId] = {
     ...(draft[stateId] || initialApiCallerState),
@@ -36,11 +41,11 @@ export const apiGetFail = (draft, action) => {
     error: true,
     success: false,
     returned: new Date(),
-    errorData: action.response,
+    errorData: action.response as HttpErrorResponse,
   };
 };
 
-export const apiGetFromCache = (draft, action) => {
+export const apiGetFromCache = (draft: Draft<GlobalApiState>, action: Payload<ApiCallItem>) => {
   const stateId = getStateId(action.payload);
   draft[stateId] = {
     ...(draft[stateId] || initialApiCallerState),
@@ -50,7 +55,7 @@ export const apiGetFromCache = (draft, action) => {
   };
 };
 
-export const apiClearState = (draft, action) => {
+export const apiClearState = (draft: Draft<GlobalApiState>, action: Payload<ApiCallItem>) => {
   const stateId = getStateId(action.payload);
   draft[stateId] = initialApiCallerState;
 };
