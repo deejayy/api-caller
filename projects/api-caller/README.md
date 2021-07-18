@@ -13,7 +13,7 @@ npm install @deejayy/api-caller
 
 **Add these to your app.module.ts:**
 
-**Angular 10**
+**Angular 10 / api-caller v1**
 
 ```ts
 imports: [
@@ -24,7 +24,7 @@ imports: [
 ],
 ```
 
-**Angular 11** (`strictStateImmutability` should be set to false)
+**Angular 11 / api-caller v2** (`strictStateImmutability` should be set to false)
 
 ```ts
 imports: [

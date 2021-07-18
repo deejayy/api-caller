@@ -20,11 +20,11 @@
   ],
   "homepage": "https://github.com/deejayy/api-caller",
   "peerDependencies": {
-    "@angular/common": "^10.0.0 || ^11.0.0",
-    "@angular/core": "^10.0.0 || ^11.0.0",
-    "@ngrx/effects": "^10.0.0 || ^11.0.0",
-    "@ngrx/store": "^10.0.0 || ^11.0.0",
-    "@ngrx/store-devtools": "^10.0.0 || ^11.0.0",
+    "@angular/common": "^11.0.0",
+    "@angular/core": "^11.0.0",
+    "@ngrx/effects": "^11.0.0",
+    "@ngrx/store": "^11.0.0",
+    "@ngrx/store-devtools": "^11.0.0",
     "immer": "^8.0.0"
   },
   "dependencies": {

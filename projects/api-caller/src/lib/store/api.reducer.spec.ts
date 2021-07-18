@@ -1,4 +1,6 @@
+import { HttpErrorResponse, HttpResponseBase } from '@angular/common/http';
 import * as actionReducers from './api.reducer';
+import { GlobalApiState } from './api.state';
 
 jest.useFakeTimers('modern').setSystemTime(new Date('2020-01-01').getTime());
 
@@ -32,10 +34,11 @@ describe('ApiRedicer', () => {
         api: '/',
         path: '/',
       },
+      response: null,
     });
     expect(draft).toEqual({
       '//': {
-        data: undefined,
+        data: null,
         errorData: null,
         fired: null,
         loading: false,
@@ -53,11 +56,12 @@ describe('ApiRedicer', () => {
         api: '/',
         path: '/',
       },
+      response: null,
     });
     expect(draft).toEqual({
       '//': {
         data: null,
-        errorData: undefined,
+        errorData: null,
         fired: null,
         loading: false,
         error: true,
@@ -113,12 +117,12 @@ describe('ApiRedicer', () => {
     const draft = {
       '//': {
         data: 'test data',
-        errorData: 'test errorData',
-        returned: 'test returned',
-        loading: 'test loading',
-        error: 'test error',
-        success: 'test success',
-        fired: 'test fired',
+        errorData: new HttpErrorResponse({ headers: undefined, status: 800 }),
+        returned: new Date(),
+        loading: false,
+        error: true,
+        success: true,
+        fired: null,
       },
     };
     actionReducers.apiGet(draft, {
@@ -130,8 +134,8 @@ describe('ApiRedicer', () => {
     expect(draft).toEqual({
       '//': {
         data: 'test data',
-        errorData: 'test errorData',
-        returned: 'test returned',
+        errorData: new HttpErrorResponse({ headers: undefined, status: 800 }),
+        returned: new Date(),
         loading: true,
         error: false,
         success: false,
@@ -141,15 +145,15 @@ describe('ApiRedicer', () => {
   });
 
   it('test apiGetSuccess, with preset state', () => {
-    const draft = {
+    const draft: GlobalApiState = {
       '//': {
         data: 'test data',
-        errorData: 'test errorData',
-        returned: 'test returned',
-        loading: 'test loading',
-        error: 'test error',
-        success: 'test success',
-        fired: 'test fired',
+        errorData: new HttpErrorResponse({ headers: undefined, status: 800 }),
+        fired: null,
+        loading: true,
+        error: true,
+        success: false,
+        returned: null,
       },
     };
     actionReducers.apiGetSuccess(draft, {
@@ -157,30 +161,31 @@ describe('ApiRedicer', () => {
         api: '/',
         path: '/',
       },
+      response: { data: 1 } as unknown as HttpResponseBase,
     });
     expect(draft).toEqual({
       '//': {
-        data: undefined,
-        errorData: 'test errorData',
-        fired: 'test fired',
+        fired: null,
+        errorData: new HttpErrorResponse({ headers: undefined, status: 800 }),
         loading: false,
         error: false,
         success: true,
         returned: new Date(),
+        data: { data: 1 },
       },
-    });
+    } as GlobalApiState);
   });
 
   it('test apiGetFail, with preset state', () => {
     const draft = {
       '//': {
         data: 'test data',
-        errorData: 'test errorData',
-        returned: 'test returned',
-        loading: 'test loading',
-        error: 'test error',
-        success: 'test success',
-        fired: 'test fired',
+        errorData: new HttpErrorResponse({ headers: undefined, status: 800 }),
+        fired: null,
+        loading: true,
+        error: false,
+        success: true,
+        returned: null,
       },
     };
     actionReducers.apiGetFail(draft, {
@@ -188,30 +193,31 @@ describe('ApiRedicer', () => {
         api: '/',
         path: '/',
       },
+      response: new HttpErrorResponse({ headers: undefined, status: 801 }),
     });
     expect(draft).toEqual({
       '//': {
         data: 'test data',
-        errorData: undefined,
-        fired: 'test fired',
+        errorData: new HttpErrorResponse({ headers: undefined, status: 801 }),
+        fired: null,
         loading: false,
         error: true,
         success: false,
         returned: new Date(),
       },
-    });
+    } as GlobalApiState);
   });
 
   it('test apiGetFromCache, with preset state', () => {
     const draft = {
       '//': {
         data: 'test data',
-        errorData: 'test errorData',
-        returned: 'test returned',
-        loading: 'test loading',
-        error: 'test error',
-        success: 'test success',
-        fired: 'test fired',
+        errorData: new HttpErrorResponse({ headers: undefined, status: 800 }),
+        returned: new Date(),
+        loading: true,
+        error: true,
+        success: false,
+        fired: new Date(),
       },
     };
     actionReducers.apiGetFromCache(draft, {
@@ -223,26 +229,26 @@ describe('ApiRedicer', () => {
     expect(draft).toEqual({
       '//': {
         data: 'test data',
-        errorData: 'test errorData',
-        returned: 'test returned',
+        errorData: new HttpErrorResponse({ headers: undefined, status: 800 }),
+        returned: new Date(),
         loading: false,
         error: false,
         success: true,
-        fired: 'test fired',
+        fired: new Date(),
       },
-    });
+    } as GlobalApiState);
   });
 
   it('test apiClearState, with preset state', () => {
     const draft = {
       '//': {
-        data: 'test data',
-        errorData: 'test errorData',
-        returned: 'test returned',
-        loading: 'test loading',
-        error: 'test error',
-        success: 'test success',
-        fired: 'test fired',
+        data: 'data',
+        errorData: new HttpErrorResponse({ headers: undefined, status: 800 }),
+        returned: new Date(),
+        loading: true,
+        error: true,
+        success: true,
+        fired: new Date(),
       },
     };
     actionReducers.apiClearState(draft, {
