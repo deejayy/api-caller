@@ -30,7 +30,7 @@
     "@ngrx/effects": "^11",
     "@ngrx/store": "^11",
     "@ngrx/store-devtools": "^11",
-    "immer": "^8",
+    "immer": "^9",
     "jest-marbles": "^2.5.1",
     "rxjs": "^6.6.7",
     "tslib": "^2.1.0",
