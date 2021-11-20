@@ -24,7 +24,7 @@ imports: [
 ],
 ```
 
-**Angular 11 / api-caller v2** (`strictStateImmutability` should be set to false)
+**Angular 11 or 12 / api-caller v2** (`strictStateImmutability` should be set to false)
 
 ```ts
 imports: [
