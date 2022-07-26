@@ -102,7 +102,7 @@ export class ApiCallerService {
       if (call.payload) {
         headers = headers.append('Content-Type', 'application/x-www-form-urlencoded');
         const formData: FormData = new FormData();
-        formData.append(call.binaryUpload, call.payload[0]);
+        formData.append(call.binaryUpload, call.payload[0] as Blob);
         options.body = formData;
       } else {
         console.warn(`[${apiStateId}] No file selected for upload but binaryUpload field name is set`);

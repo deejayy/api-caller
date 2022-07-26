@@ -31,7 +31,7 @@ export class ApiEffects {
     };
   }
 
-  public getApiEffect = ({ payload }) => {
+  public getApiEffect = ({ payload }: { payload: ApiCallItem }) => {
     const stateId = getStateId(payload);
     return this.store
       .pipe(select(ApiSelectors.isCached(stateId, payload.cacheTimeout)))
