@@ -4,7 +4,7 @@ import { ApiCallItem } from '../model/api-call-item.model';
 import { apiStateId } from '../model/api-state-id';
 import { ApiState, GlobalApiState, initialApiCallerState } from './api.state';
 
-export const getStateId = (payload: ApiCallItem): string => `${payload.api}${payload.path}`;
+export const getStateId = (payload: ApiCallItem): string => `${payload.api || ''}${payload.path}`;
 
 const getApiState = createFeatureSelector<GlobalApiState>(apiStateId);
 const getApiSubState = (stateId: string) =>
@@ -17,6 +17,8 @@ export class ApiSelectors {
     createSelector(getApiSubState(stateId), (state: ApiState) => state.loading);
   public static getResponse = (stateId: string) =>
     createSelector(getApiSubState(stateId), (state: ApiState) => state.data);
+  public static getHeaders = (stateId: string) =>
+    createSelector(getApiSubState(stateId), (state: ApiState) => state.headers);
   public static getErrorData = (stateId: string) =>
     createSelector(getApiSubState(stateId), (state: ApiState) => state.errorData);
   public static isFailed = (stateId: string) =>

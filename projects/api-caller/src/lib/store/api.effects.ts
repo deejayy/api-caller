@@ -1,4 +1,4 @@
-import { HttpErrorResponse, HttpResponseBase } from '@angular/common/http';
+import { HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
@@ -14,11 +14,11 @@ import { ApiState } from './api.state';
 @Injectable()
 export class ApiEffects {
   public handleSuccess(request: ApiCallItem) {
-    return (response: HttpResponseBase) => ApiActions.ApiGetSuccess({ request, response });
+    return (response: HttpResponse<any>) => ApiActions.ApiGetSuccess({ request, response });
   }
 
   public handleError(request: ApiCallItem) {
-    return (response: HttpErrorResponse) => of(ApiActions.ApiGetFail({ request, response }));
+    return (response: HttpResponse<any>) => of(ApiActions.ApiGetFail({ request, response }));
   }
 
   public mergeWithCache(request: ApiCallItem) {

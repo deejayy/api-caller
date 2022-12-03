@@ -1,20 +1,22 @@
-import { HttpClient, HttpHeaders, HttpResponseBase } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { mergeMap, take } from 'rxjs/operators';
 
+import { Payload } from '../helper/payload.model';
 import { ApiCallItem, ApiInterface, SimplifiedHttpOptions } from '../model/api-call-item.model';
 import { apiStateId } from '../model/api-state-id';
 import { ApiActions } from '../store/api.actions';
 import { ApiSelectors, getStateId } from '../store/api.selectors';
 import { ApiResultState, ApiState } from '../store/api.state';
 import { ApiConnector } from './api-connector';
-import { Payload } from '../helper/payload.model';
 
 @Injectable()
 export class ApiCallerService {
-  public tokenData$: Observable<string> = of(`[${apiStateId}] Can't send requests with authorization, token provider not found`);
+  public tokenData$: Observable<string> = of(
+    `[${apiStateId}] Can't send requests with authorization, token provider not found`,
+  );
   public defaultApiUrl: string = '/';
   public errorHandler: (payload: ApiInterface) => void = (payload: ApiInterface) => {
     console.warn(`[${apiStateId}] Unhandled API error occurred, code: ${payload.response.status}`);
@@ -67,11 +69,10 @@ export class ApiCallerService {
     // Workaround to avoid "TypeError: Cannot freeze" error, native primitives (like FileList) cannot be passed to the state manager
     // See: https://stackoverflow.com/a/53092520
     if (apiCallItem.binaryUpload) {
-      apiCallItem.payload = apiCallItem.payload && apiCallItem.payload.length > 0 ? { ...apiCallItem.payload } : undefined;
+      apiCallItem.payload =
+        apiCallItem.payload && apiCallItem.payload.length > 0 ? { ...apiCallItem.payload } : undefined;
     }
-    this.store.dispatch(
-      ApiActions.ApiGet(this.getApiCallPayload(apiCallItem)),
-    );
+    this.store.dispatch(ApiActions.ApiGet(this.getApiCallPayload(apiCallItem)));
     return this.createApiResults<ResponseType>(apiCallItem);
   }
 
@@ -92,6 +93,7 @@ export class ApiCallerService {
       error$: this.store.pipe(select(ApiSelectors.isFailed(stateId))),
       success$: this.store.pipe(select(ApiSelectors.isSucceeded(stateId))),
       finished$: this.store.pipe(select(ApiSelectors.isFinished(stateId))),
+      headers$: this.store.pipe(select(ApiSelectors.getHeaders(stateId))),
     };
   }
 
@@ -112,16 +114,15 @@ export class ApiCallerService {
     return headers;
   }
 
-  public makeRequest(call: ApiCallItem): Observable<HttpResponseBase> {
+  public makeRequest(call: ApiCallItem): Observable<HttpResponse<any>> {
     const method = call.method || (call.payload ? 'POST' : 'GET');
     const api = call.api;
-    const url = api + call.path;
-    const options: SimplifiedHttpOptions = { body: call.payload };
+    const url = `${api || ''}${call.path}`;
+    const options: SimplifiedHttpOptions = { body: call.payload, observe: 'response' };
     const headers = this.makeHeaders(call, options);
 
     if (call.binaryResponse) {
       options.responseType = 'blob';
-      options.observe = 'response';
     }
 
     if (call.needsAuth) {

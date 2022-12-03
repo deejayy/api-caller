@@ -8,6 +8,6 @@ module.exports = {
     },
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupJest.ts'],
-  moduleDirectories: ['node_modules', 'src'],
+  moduleDirectories: ['node_modules', 'src', 'projects'],
   transformIgnorePatterns: ['node_modules'],
 };

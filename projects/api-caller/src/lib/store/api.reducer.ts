@@ -29,7 +29,8 @@ export const apiGetSuccess = (draft: Draft<GlobalApiState>, action: ApiInterface
     error: false,
     success: true,
     returned: new Date(),
-    data: action.response,
+    headers: action.response.headers,
+    data: action.response.body,
   };
 };
 
@@ -41,7 +42,8 @@ export const apiGetFail = (draft: Draft<GlobalApiState>, action: ApiInterface) =
     error: true,
     success: false,
     returned: new Date(),
-    errorData: action.response as HttpErrorResponse,
+    headers: action.response.headers,
+    errorData: action.response.body as HttpErrorResponse,
   };
 };
 

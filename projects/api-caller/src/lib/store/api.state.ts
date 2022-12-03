@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface ApiState {
@@ -7,9 +7,10 @@ export interface ApiState {
   success: boolean;
   error: boolean;
   data: any;
+  headers: HttpHeaders;
   errorData: HttpErrorResponse;
-  fired: Date;
-  returned: Date;
+  fired: Date | undefined;
+  returned: Date | undefined;
 }
 
 export interface GlobalApiState {
@@ -22,6 +23,7 @@ export interface ApiResultState<T = any> {
   error$: Observable<boolean>;
   finished$: Observable<boolean>;
   data$: Observable<T>;
+  headers$: Observable<HttpHeaders>;
   errorData$: Observable<HttpErrorResponse>;
 }
 
@@ -32,7 +34,8 @@ export const initialApiCallerState: ApiState = {
   success: false,
   error: false,
   data: null,
-  errorData: null,
-  fired: null,
-  returned: null,
+  headers: new HttpHeaders(),
+  errorData: new HttpErrorResponse({}),
+  fired: undefined,
+  returned: undefined,
 };
