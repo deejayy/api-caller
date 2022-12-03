@@ -13,12 +13,24 @@ import { ApiState } from './api.state';
 
 @Injectable()
 export class ApiEffects {
+  private parseHeaders(response: HttpResponse<any>): Record<string, string> {
+    return response.headers
+      .keys()
+      .map((key) => {
+        return { [key]: response.headers.get(key) || '' };
+      })
+      .reduce((acc, curr) => ({ ...acc, ...curr }));
+  }
+
   public handleSuccess(request: ApiCallItem) {
-    return (response: HttpResponse<any>) => ApiActions.ApiGetSuccess({ request, response });
+    return (response: HttpResponse<any>) => {
+      return ApiActions.ApiGetSuccess({ request, response, headers: this.parseHeaders(response) });
+    };
   }
 
   public handleError(request: ApiCallItem) {
-    return (response: HttpResponse<any>) => of(ApiActions.ApiGetFail({ request, response }));
+    return (response: HttpResponse<any>) =>
+      of(ApiActions.ApiGetFail({ request, response, headers: this.parseHeaders(response) }));
   }
 
   public mergeWithCache(request: ApiCallItem) {

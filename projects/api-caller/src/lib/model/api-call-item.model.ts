@@ -20,6 +20,7 @@ export interface ApiCallItem {
 export interface ApiInterface {
   request: ApiCallItem;
   response: HttpResponse<any>;
+  headers: Record<string, string>;
 }
 
 export type SimplifiedHttpOptions = {

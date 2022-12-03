@@ -29,7 +29,7 @@ export const apiGetSuccess = (draft: Draft<GlobalApiState>, action: ApiInterface
     error: false,
     success: true,
     returned: new Date(),
-    headers: action.response.headers,
+    headers: action.headers,
     data: action.response.body,
   };
 };
@@ -42,7 +42,7 @@ export const apiGetFail = (draft: Draft<GlobalApiState>, action: ApiInterface) =
     error: true,
     success: false,
     returned: new Date(),
-    headers: action.response.headers,
+    headers: action.headers,
     errorData: action.response.body as HttpErrorResponse,
   };
 };
