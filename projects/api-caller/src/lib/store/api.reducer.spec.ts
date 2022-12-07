@@ -1,4 +1,4 @@
-import { HttpErrorResponse, HttpResponse, HttpResponseBase } from '@angular/common/http';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import * as actionReducers from './api.reducer';
 import { GlobalApiState } from './api.state';
 
