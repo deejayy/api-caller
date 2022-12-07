@@ -1,5 +1,5 @@
 import { Action, createReducer } from '@ngrx/store';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Draft } from 'immer';
 
 import { produceOn } from '../helper/produce-on';
@@ -30,7 +30,8 @@ export const apiGetSuccess = (draft: Draft<GlobalApiState>, action: ApiInterface
     success: true,
     returned: new Date(),
     headers: action.headers,
-    data: action.response.body,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: (action.response as HttpResponse<any>)?.body,
   };
 };
 
@@ -43,7 +44,7 @@ export const apiGetFail = (draft: Draft<GlobalApiState>, action: ApiInterface) =
     success: false,
     returned: new Date(),
     headers: action.headers,
-    errorData: action.response.body as HttpErrorResponse,
+    errorData: action.response as HttpErrorResponse,
   };
 };
 

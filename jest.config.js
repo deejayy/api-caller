@@ -8,6 +8,7 @@ module.exports = {
     },
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupJest.ts'],
+  fakeTimers: { enableGlobally: true },
   moduleDirectories: ['node_modules', 'src', 'projects'],
-  transformIgnorePatterns: ['node_modules'],
+  transformIgnorePatterns: ['/node_modules/(?!.*\\.mjs$)'],
 };

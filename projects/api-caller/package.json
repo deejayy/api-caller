@@ -1,6 +1,6 @@
 {
   "name": "@deejayy/api-caller",
-  "version": "14.1.0",
+  "version": "14.2.0",
   "description": "Simple Api Caller library for Angular",
   "private": false,
   "repository": {
@@ -26,11 +26,11 @@
   ],
   "homepage": "https://github.com/deejayy/api-caller",
   "peerDependencies": {
-    "@angular/common": "^11 || ^12 || ^13 || ^14",
-    "@angular/core": "^11 || ^12 || ^13 || ^14",
-    "@ngrx/effects": "^11 || ^12 || ^13 || ^14",
-    "@ngrx/store": "^11 || ^12 || ^13 || ^14",
-    "@ngrx/store-devtools": "^11 || ^12 || ^13 || ^14",
+    "@angular/common": "^13 || ^14 || ^15",
+    "@angular/core": "^13 || ^14 || ^15",
+    "@ngrx/effects": "^13 || ^14 || ^15",
+    "@ngrx/store": "^13 || ^14 || ^15",
+    "@ngrx/store-devtools": "^13 || ^14 || ^15",
     "immer": "^9"
   },
   "dependencies": {

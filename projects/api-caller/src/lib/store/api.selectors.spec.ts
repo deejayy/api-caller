@@ -1,3 +1,4 @@
+import { HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { cold } from 'jest-marbles';
@@ -30,13 +31,13 @@ describe('ApiSelectors', () => {
     expect(result).toEqual('//');
 
     result = getStateId({} as ApiCallItem);
-    expect(result).toEqual('undefinedundefined');
+    expect(result).toEqual('undefined');
 
     result = getStateId({ api: '/' } as ApiCallItem);
     expect(result).toEqual('/undefined');
 
     result = getStateId({ path: '/' } as ApiCallItem);
-    expect(result).toEqual('undefined/');
+    expect(result).toEqual('/');
   });
 
   it('test selector: null state', () => {
@@ -71,7 +72,7 @@ describe('ApiSelectors', () => {
 
   it('test selector: getErrorData initial', () => {
     store.setState({ '@deejayy/api-caller': { '//': { ...initialApiCallerState } } });
-    const expected = cold('a', { a: null });
+    const expected = cold('a', { a: new HttpErrorResponse({ headers: new HttpHeaders() }) });
     expect(store.select(ApiSelectors.getErrorData('//'))).toBeObservable(expected);
   });
 

@@ -114,6 +114,7 @@ export class ApiCallerService {
     return headers;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public makeRequest(call: ApiCallItem): Observable<HttpResponse<any>> {
     const method = call.method || (call.payload ? 'POST' : 'GET');
     const api = call.api;

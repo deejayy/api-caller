@@ -1,4 +1,4 @@
-import { HttpErrorResponse, HttpResponseBase } from '@angular/common/http';
+import { HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
@@ -43,27 +43,32 @@ describe('ApiEffects', () => {
   it('handle cache', () => {
     actions$ = of({ type: 'Test' });
     const result = service.mergeWithCache({ path: '/', useCache: true })(true);
-    const expected = cold('(a|)', { a: { payload: { path: '/', useCache: true }, response: undefined, type: '[API] Get From Cache' } });
+    const expected = cold('(a|)', {
+      a: { payload: { path: '/', useCache: true }, response: undefined, type: '[API] Get From Cache' },
+    });
     expect(result).toBeObservable(expected);
   });
 
   it('handle success action, empty', () => {
     actions$ = of({ type: 'Test' });
-    const result = service.handleSuccess({ path: '/' })(undefined);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = service.handleSuccess({ path: '/' })(undefined as unknown as HttpResponse<any>);
     const expected = { request: { path: '/' }, response: undefined, type: '[API] Get Success' };
     expect(result).toEqual(expected);
   });
 
   it('handle success action, response', () => {
     actions$ = of({ type: 'Test' });
-    const result = service.handleSuccess({ path: '/' })({} as HttpResponseBase);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = service.handleSuccess({ path: '/' })({} as HttpResponse<any>);
     const expected = { request: { path: '/' }, response: {}, type: '[API] Get Success' };
     expect(result).toEqual(expected);
   });
 
   it('handle error action, empty', () => {
     actions$ = of({ type: 'Test' });
-    const result = service.handleError({ path: '/' })(undefined);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = service.handleError({ path: '/' })(undefined as unknown as HttpResponse<any>);
     const expected = cold('(a|)-', {
       a: { request: { path: '/' }, response: undefined, type: '[API] Get Fail' },
     });
@@ -72,9 +77,14 @@ describe('ApiEffects', () => {
 
   it('handle error action, response', () => {
     actions$ = of({ type: 'Test' });
-    const result = service.handleError({ path: '/' })(new HttpErrorResponse({}));
+    const result = service.handleError({ path: '/' })(new HttpErrorResponse({ headers: new HttpHeaders() }));
     const expected = cold('(a|)-', {
-      a: { request: { path: '/' }, response: new HttpErrorResponse({}), type: '[API] Get Fail' },
+      a: {
+        request: { path: '/' },
+        response: new HttpErrorResponse({}),
+        headers: {},
+        type: '[API] Get Fail',
+      },
     });
     expect(result).toBeObservable(expected);
   });

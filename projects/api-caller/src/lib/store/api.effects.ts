@@ -1,4 +1,4 @@
-import { HttpResponse } from '@angular/common/http';
+import { HttpResponse, HttpResponseBase } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
@@ -13,23 +13,24 @@ import { ApiState } from './api.state';
 
 @Injectable()
 export class ApiEffects {
-  private parseHeaders(response: HttpResponse<any>): Record<string, string> {
-    return response.headers
-      .keys()
+  private parseHeaders(response: HttpResponseBase): Record<string, string> {
+    return response?.headers
+      ?.keys()
       .map((key) => {
         return { [key]: response.headers.get(key) || '' };
       })
-      .reduce((acc, curr) => ({ ...acc, ...curr }));
+      .reduce((acc, curr) => ({ ...acc, ...curr }), {});
   }
 
   public handleSuccess(request: ApiCallItem) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (response: HttpResponse<any>) => {
       return ApiActions.ApiGetSuccess({ request, response, headers: this.parseHeaders(response) });
     };
   }
 
   public handleError(request: ApiCallItem) {
-    return (response: HttpResponse<any>) =>
+    return (response: HttpResponseBase) =>
       of(ApiActions.ApiGetFail({ request, response, headers: this.parseHeaders(response) }));
   }
 
