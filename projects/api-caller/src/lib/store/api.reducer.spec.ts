@@ -42,7 +42,7 @@ describe('ApiRedicer', () => {
       '//': {
         data: undefined,
         errorData: new HttpErrorResponse({}),
-        headers: undefined,
+        headers: {},
         fired: undefined,
         loading: false,
         error: false,
@@ -66,7 +66,7 @@ describe('ApiRedicer', () => {
       '//': {
         data: null,
         errorData: null,
-        headers: undefined,
+        headers: {},
         fired: undefined,
         loading: false,
         error: true,

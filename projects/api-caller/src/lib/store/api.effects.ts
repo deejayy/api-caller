@@ -14,8 +14,8 @@ import { ApiState } from './api.state';
 @Injectable()
 export class ApiEffects {
   private parseHeaders(response: HttpResponseBase): Record<string, string> {
-    return response.headers
-      .keys()
+    return response?.headers
+      ?.keys()
       .map((key) => {
         return { [key]: response.headers.get(key) ?? '' };
       })

@@ -30,7 +30,7 @@ export const apiGetSuccess = (draft: Draft<GlobalApiState>, action: ApiInterface
     returned: new Date(),
     headers: action.headers,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    data: (action.response as HttpResponse<any>).body,
+    data: (action.response as HttpResponse<any>)?.body,
   };
 };
 

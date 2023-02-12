@@ -50,7 +50,7 @@ export class ApiCallerService {
   }
 
   public handleError(payload: ApiInterface) {
-    if (!payload.request.localErrorHandling) {
+    if (!payload.request?.localErrorHandling) {
       return this.getErrorHandler()(payload);
     }
 
