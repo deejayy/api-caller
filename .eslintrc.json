@@ -1,6 +1,5 @@
 {
   "root": true,
-  "ignorePatterns": ["projects/**/*"],
   "overrides": [
     {
       "files": ["*.ts"],
@@ -22,6 +21,9 @@
       ],
       "plugins": ["eslint-plugin-no-null"],
       "rules": {
+        "indent": ["off"],
+        "@typescript-eslint/indent": ["off"],
+        "function-paren-newline": "off",
         "import/no-extraneous-dependencies": ["off"],
         "@angular-eslint/component-class-suffix": ["error", { "suffixes": ["Component", "Modal", "Page"] }],
         "@angular-eslint/component-max-inline-declarations": "error",
@@ -48,32 +50,26 @@
         "@angular-eslint/relative-url-prefix": "error",
         "@angular-eslint/sort-ngmodule-metadata-arrays": "error",
         "@angular-eslint/use-component-view-encapsulation": "error",
-        "@angular-eslint/use-injectable-provided-in": "error",
+        "@angular-eslint/use-injectable-provided-in": "off",
         "@angular-eslint/use-lifecycle-interface": "error",
         "@angular-eslint/use-pipe-transform-interface": "error",
         "@typescript-eslint/lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
         "@typescript-eslint/no-extraneous-class": ["error", { "allowEmpty": true, "allowStaticOnly": true }],
         "@typescript-eslint/no-misused-promises": ["error", { "checksVoidReturn": false }],
         "@typescript-eslint/no-non-null-assertion": "off",
-        "@typescript-eslint/unbound-method": ["error", { "ignoreStatic": true }],
+        "@typescript-eslint/unbound-method": ["off"],
+        "@typescript-eslint/no-invalid-void-type": "off",
         "import/no-cycle": ["error", { "maxDepth": 2 }],
         "import/no-import-module-exports": "off",
         "import/prefer-default-export": "off",
-        "class-methods-use-this": ["error", { "exceptMethods": ["trackBy"] }],
+        "class-methods-use-this": ["off"],
+        "no-confusing-arrow": "off",
         "no-param-reassign": ["error", { "props": false }],
         "no-plusplus": "off",
         "no-restricted-globals": "off",
         "no-return-assign": "off",
         "no-underscore-dangle": "off",
-        "object-curly-newline": [
-          "error",
-          {
-            "ExportDeclaration": { "multiline": true },
-            "ImportDeclaration": { "multiline": true },
-            "ObjectExpression": { "minProperties": 4, "multiline": true },
-            "ObjectPattern": { "minProperties": 4, "multiline": true }
-          }
-        ],
+        "object-curly-newline": ["off"],
         "padded-blocks": "off",
         "radix": ["error", "as-needed"],
         "@angular-eslint/directive-selector": [
@@ -174,6 +170,8 @@
         "import/order": "off",
         "jsdoc/check-alignment": "off",
         "jsdoc/newline-after-description": "off",
+        "operator-linebreak": "off",
+        "implicit-arrow-linebreak": "off",
         "linebreak-style": ["error", "unix"],
         "max-len": [
           "error",

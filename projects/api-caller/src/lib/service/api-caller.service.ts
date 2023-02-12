@@ -17,6 +17,7 @@ export class ApiCallerService {
   public tokenData$: Observable<string> = of(
     `[${apiStateId}] Can't send requests with authorization, token provider not found`,
   );
+
   public defaultApiUrl: string = '/';
   public errorHandler: (payload: ApiInterface) => void = (payload: ApiInterface) => {
     console.warn(`[${apiStateId}] Unhandled API error occurred, code: ${payload.response.status}`);
@@ -25,7 +26,7 @@ export class ApiCallerService {
   constructor(
     private http: HttpClient,
     private store: Store<ApiState>,
-    @Optional() private apiConnector: ApiConnector,
+    @Optional() private apiConnector?: ApiConnector,
   ) {
     if (!this.apiConnector) {
       console.warn(`[${apiStateId}] apiConnector not provided, check README.md`);
@@ -37,30 +38,30 @@ export class ApiCallerService {
   }
 
   public getDefaultApiUrl(): string {
-    return this.apiConnector?.defaultApiUrl || this.defaultApiUrl;
+    return this.apiConnector?.defaultApiUrl ?? this.defaultApiUrl;
   }
 
   public getTokenData(): Observable<string> {
-    return this.apiConnector?.tokenData$ || this.tokenData$;
+    return this.apiConnector?.tokenData$ ?? this.tokenData$;
   }
 
   public getErrorHandler(): (payload: ApiInterface) => void {
-    return this.apiConnector?.errorHandler || this.errorHandler;
+    return this.apiConnector?.errorHandler ?? this.errorHandler;
   }
 
   public handleError(payload: ApiInterface) {
-    if (!payload.request?.localErrorHandling) {
+    if (!payload.request.localErrorHandling) {
       return this.getErrorHandler()(payload);
-    } else {
-      return 'Handled locally';
     }
+
+    return 'Handled locally';
   }
 
   public getApiCallPayload(apiCallItem: ApiCallItem): Payload<ApiCallItem> {
     return {
       payload: {
         ...apiCallItem,
-        api: apiCallItem.api || this.getDefaultApiUrl(),
+        api: apiCallItem.api ?? this.getDefaultApiUrl(),
       },
     };
   }
@@ -116,9 +117,9 @@ export class ApiCallerService {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public makeRequest(call: ApiCallItem): Observable<HttpResponse<any>> {
-    const method = call.method || (call.payload ? 'POST' : 'GET');
-    const api = call.api;
-    const url = `${api || ''}${call.path}`;
+    const method = call.method ?? (call.payload ? 'POST' : 'GET');
+    const { api } = call;
+    const url = `${api ?? ''}${call.path}`;
     const options: SimplifiedHttpOptions = { body: call.payload, observe: 'response' };
     const headers = this.makeHeaders(call, options);
 
@@ -134,8 +135,8 @@ export class ApiCallerService {
           return this.http.request(method, url, options);
         }),
       );
-    } else {
-      return this.http.request(method, url, options);
     }
+
+    return this.http.request(method, url, options);
   }
 }

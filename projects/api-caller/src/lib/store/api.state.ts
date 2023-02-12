@@ -13,9 +13,7 @@ export interface ApiState {
   returned: Date | undefined;
 }
 
-export interface GlobalApiState {
-  [key: string]: ApiState;
-}
+export type GlobalApiState = Record<string, ApiState>;
 
 export interface ApiResultState<T = any> {
   loading$: Observable<boolean>;

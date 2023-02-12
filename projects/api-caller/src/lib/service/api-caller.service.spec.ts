@@ -22,6 +22,7 @@ class CustomApiConnector extends ApiConnector {
   public override errorHandler = () => {
     console.error('Handled in CustomApiConnector');
   };
+
   public override tokenData$ = of('custom injected token');
 }
 
@@ -77,6 +78,7 @@ describe('ApiCallerService', () => {
     console.warn = jest.fn();
     const result = service.getErrorHandler();
     result({
+      headers: {},
       request: null as unknown as ApiCallItem,
       response: {
         status: 409,
@@ -116,11 +118,7 @@ describe('ApiCallerService', () => {
   });
 
   it('createApiResults', (done) => {
-    const result = service.createApiResults({
-      apiCallItem: {
-        path: '/',
-      }
-    });
+    const result = service.createApiResults({ path: '/' });
     result.data$.subscribe((v) => {
       expect(v).toEqual(null);
       done();
@@ -293,6 +291,7 @@ describe('ApiCallerService with Connector', () => {
     console.error = jest.fn();
     const result = service.getErrorHandler();
     result({
+      headers: {},
       request: null as unknown as ApiCallItem,
       response: {
         status: 409,
@@ -332,11 +331,7 @@ describe('ApiCallerService with Connector', () => {
   });
 
   it('createApiResults', (done) => {
-    const result = service.createApiResults({
-      apiCallItem: {
-        path: '/',
-      }
-    });
+    const result = service.createApiResults({ path: '/' });
     result.data$.subscribe((v) => {
       expect(v).toEqual(null);
       done();
@@ -467,6 +462,7 @@ describe('ApiCallerService with Connector', () => {
   it('handleError', () => {
     console.error = jest.fn();
     service.handleError({
+      headers: {},
       request: null as unknown as ApiCallItem,
       response: {
         status: 410,
@@ -483,6 +479,7 @@ describe('ApiCallerService with Connector', () => {
   it('handleError with local error handling', () => {
     console.error = jest.fn();
     const result = service.handleError({
+      headers: {},
       request: { path: undefined as unknown as string, localErrorHandling: true },
       response: {
         status: 410,

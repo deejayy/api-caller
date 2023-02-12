@@ -1,4 +1,4 @@
-import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpHeaders, HttpResponse, HttpResponseBase } from '@angular/common/http';
 import * as actionReducers from './api.reducer';
 import { GlobalApiState } from './api.state';
 
@@ -35,7 +35,8 @@ describe('ApiRedicer', () => {
         api: '/',
         path: '/',
       },
-      response: null,
+      response: null as unknown as HttpResponseBase,
+      headers: {},
     });
     expect(draft).toEqual({
       '//': {
@@ -58,7 +59,8 @@ describe('ApiRedicer', () => {
         api: '/',
         path: '/',
       },
-      response: null,
+      response: null as unknown as HttpResponseBase,
+      headers: {},
     });
     expect(draft).toEqual({
       '//': {
@@ -122,13 +124,13 @@ describe('ApiRedicer', () => {
     const draft = {
       '//': {
         data: 'test data',
-        errorData: new HttpErrorResponse({ headers: undefined, status: 800 }),
+        errorData: new HttpErrorResponse({ headers: undefined as unknown as HttpHeaders, status: 800 }),
         headers: {},
         returned: new Date(),
         loading: false,
         error: true,
         success: true,
-        fired: null,
+        fired: undefined,
       },
     };
     actionReducers.apiGet(draft, {
@@ -140,7 +142,7 @@ describe('ApiRedicer', () => {
     expect(draft).toEqual({
       '//': {
         data: 'test data',
-        errorData: new HttpErrorResponse({ headers: undefined, status: 800 }),
+        errorData: new HttpErrorResponse({ headers: undefined as unknown as HttpHeaders, status: 800 }),
         headers: {},
         returned: new Date(),
         loading: true,
@@ -155,9 +157,9 @@ describe('ApiRedicer', () => {
     const draft: GlobalApiState = {
       '//': {
         data: 'test data',
-        errorData: new HttpErrorResponse({ headers: undefined, status: 800 }),
+        errorData: new HttpErrorResponse({ headers: undefined as unknown as HttpHeaders, status: 800 }),
         headers: {},
-        fired: null,
+        fired: undefined,
         loading: true,
         error: true,
         success: false,
@@ -170,12 +172,13 @@ describe('ApiRedicer', () => {
         path: '/',
       },
       response: new HttpResponse({ body: { data: 1 } }),
+      headers: {},
     });
     expect(draft).toEqual({
       '//': {
-        fired: null,
-        errorData: new HttpErrorResponse({ headers: undefined, status: 800 }),
-        headers: undefined,
+        fired: undefined,
+        errorData: new HttpErrorResponse({ headers: undefined as unknown as HttpHeaders, status: 800 }),
+        headers: {},
         loading: false,
         error: false,
         success: true,
@@ -189,9 +192,9 @@ describe('ApiRedicer', () => {
     const draft = {
       '//': {
         data: 'test data',
-        errorData: new HttpErrorResponse({ headers: undefined, status: 800 }),
+        errorData: new HttpErrorResponse({ headers: undefined as unknown as HttpHeaders, status: 800 }),
         headers: {},
-        fired: null,
+        fired: undefined,
         loading: true,
         error: false,
         success: true,
@@ -203,14 +206,15 @@ describe('ApiRedicer', () => {
         api: '/',
         path: '/',
       },
-      response: new HttpErrorResponse({ headers: undefined, status: 801 }),
+      response: new HttpErrorResponse({ headers: undefined as unknown as HttpHeaders, status: 801 }),
+      headers: {},
     });
     expect(draft).toEqual({
       '//': {
         data: 'test data',
-        errorData: new HttpErrorResponse({ headers: undefined, status: 801 }),
-        headers: undefined,
-        fired: null,
+        errorData: new HttpErrorResponse({ headers: undefined as unknown as HttpHeaders, status: 801 }),
+        headers: {},
+        fired: undefined,
         loading: false,
         error: true,
         success: false,
@@ -223,7 +227,7 @@ describe('ApiRedicer', () => {
     const draft = {
       '//': {
         data: 'test data',
-        errorData: new HttpErrorResponse({ headers: undefined, status: 800 }),
+        errorData: new HttpErrorResponse({ headers: undefined as unknown as HttpHeaders, status: 800 }),
         headers: {},
         returned: new Date(),
         loading: true,
@@ -241,7 +245,7 @@ describe('ApiRedicer', () => {
     expect(draft).toEqual({
       '//': {
         data: 'test data',
-        errorData: new HttpErrorResponse({ headers: undefined, status: 800 }),
+        errorData: new HttpErrorResponse({ headers: undefined as unknown as HttpHeaders, status: 800 }),
         headers: {},
         returned: new Date(),
         loading: false,
@@ -256,7 +260,7 @@ describe('ApiRedicer', () => {
     const draft = {
       '//': {
         data: 'data',
-        errorData: new HttpErrorResponse({ headers: undefined, status: 800 }),
+        errorData: new HttpErrorResponse({ headers: undefined as unknown as HttpHeaders, status: 800 }),
         headers: {},
         returned: new Date(),
         loading: true,
