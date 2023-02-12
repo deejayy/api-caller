@@ -40,5 +40,10 @@
         }
       }
     }},
-  "defaultProject": "api-caller"
+  "defaultProject": "api-caller",
+  "cli": {
+    "cache": {
+      "enabled": false
+    }
+  }
 }
