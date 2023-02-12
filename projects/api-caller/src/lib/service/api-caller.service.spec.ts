@@ -117,7 +117,9 @@ describe('ApiCallerService', () => {
 
   it('createApiResults', (done) => {
     const result = service.createApiResults({
-      path: '/',
+      apiCallItem: {
+        path: '/',
+      }
     });
     result.data$.subscribe((v) => {
       expect(v).toEqual(null);
@@ -331,7 +333,9 @@ describe('ApiCallerService with Connector', () => {
 
   it('createApiResults', (done) => {
     const result = service.createApiResults({
-      path: '/',
+      apiCallItem: {
+        path: '/',
+      }
     });
     result.data$.subscribe((v) => {
       expect(v).toEqual(null);

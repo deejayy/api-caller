@@ -73,7 +73,7 @@ export class ApiCallerService {
         apiCallItem.payload && apiCallItem.payload.length > 0 ? { ...apiCallItem.payload } : undefined;
     }
     this.store.dispatch(ApiActions.ApiGet(this.getApiCallPayload(apiCallItem)));
-    return this.createApiResults<ResponseType>(apiCallItem);
+    return this.createApiResults<ResponseType>({ apiCallItem });
   }
 
   public resetApi(apiCallItem: ApiCallItem) {
@@ -84,7 +84,7 @@ export class ApiCallerService {
     this.store.dispatch(ApiActions.ApiClearAllState());
   }
 
-  public createApiResults<ResponseType>(apiCallItem: ApiCallItem): ApiResultState<ResponseType> {
+  public createApiResults<ResponseType>({ apiCallItem }: { apiCallItem: ApiCallItem; }): ApiResultState<ResponseType> {
     const stateId = getStateId(this.getApiCallPayload(apiCallItem).payload);
     return {
       loading$: this.store.pipe(select(ApiSelectors.isLoading(stateId))),

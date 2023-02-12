@@ -16,7 +16,7 @@ npm install @deejayy/api-caller
 ```ts
 imports: [
   ...
-  StoreModule.forRoot({}),
+  StoreModule.forRoot(),
   EffectsModule.forRoot(),
   ApiCallerModule,
 ],

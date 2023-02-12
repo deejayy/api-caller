@@ -9,7 +9,7 @@ export const getStateId = (payload: ApiCallItem): string => `${payload.api || ''
 const getApiState = createFeatureSelector<GlobalApiState>(apiStateId);
 const getApiSubState = (stateId: string) =>
   createSelector(getApiState, (state: GlobalApiState) =>
-    state && state[stateId] ? state[stateId] : initialApiCallerState,
+    state && state[stateId] ? state[stateId] || initialApiCallerState : initialApiCallerState,
   );
 
 export class ApiSelectors {
