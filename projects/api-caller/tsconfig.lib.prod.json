@@ -1,4 +1,7 @@
 {
   "extends": "./tsconfig.lib.json",
-  "angularCompilerOptions": {}
+  "angularCompilerOptions": {
+    "compilationMode": "partial",
+    "enableIvy": false
+  }
 }
