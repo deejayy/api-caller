@@ -1,6 +1,6 @@
 {
   "name": "@deejayy/api-caller",
-  "version": "16.0.0",
+  "version": "16.0.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
