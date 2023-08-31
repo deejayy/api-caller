@@ -80,6 +80,8 @@ Used for resetting the states for all of earlier fired API calls.
 - ```binaryUpload```: string type parameter where you should pass the field name what the backend requires to upload files
 - ```binaryResponse```: if you know that the response will be a blob, set this to true
 - ```localErrorHandling```: the service normally calls the error handler defined in the `ApiConnector`, but if you don't want it to be triggered, set this flag to true. In this case, you still have the error information in the `error$` and `errorData$` streams.
+- ```sendCookies```: order the browser to send the site-related cookies along with the request (translates to `withCredentials` option)
+- ```payloadType```: optional, by default, it is json, but you can either define `formData` or `urlEncoded`
 
 ### Output
 

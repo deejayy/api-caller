@@ -8,6 +8,7 @@ export interface ApiCallItem {
   path: string;
   api?: string;
   payload?: any;
+  payloadType?: 'formData' | 'urlEncoded' | undefined;
   needsAuth?: boolean;
   useCache?: boolean;
   cacheTimeout?: MilliSeconds;
@@ -15,6 +16,7 @@ export interface ApiCallItem {
   binaryResponse?: boolean;
   method?: string;
   localErrorHandling?: boolean;
+  sendCookies?: boolean;
 }
 
 export interface ApiInterface {

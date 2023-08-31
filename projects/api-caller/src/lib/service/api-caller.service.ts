@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
-import { select, Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { mergeMap, take } from 'rxjs/operators';
 
@@ -103,7 +103,6 @@ export class ApiCallerService {
 
     if (call.binaryUpload) {
       if (call.payload) {
-        headers = headers.append('Content-Type', 'application/x-www-form-urlencoded');
         const formData: FormData = new FormData();
         formData.append(call.binaryUpload, call.payload[0] as Blob);
         options.body = formData;
@@ -112,10 +111,29 @@ export class ApiCallerService {
       }
     }
 
+    if (call.payloadType === 'urlEncoded') {
+      headers = headers.append('Content-Type', 'application/x-www-form-urlencoded');
+      const encodedData = Object.keys(call.payload as Record<string, unknown>)
+        .map(
+          (key) =>
+            `${encodeURIComponent(key)}=${encodeURIComponent((call.payload as Record<string, unknown>)[key] as string)}`,
+        )
+        .join('&');
+      options.body = encodedData;
+    }
+
+    if (call.payloadType === 'formData') {
+      const formData = new FormData();
+      Object.keys(call.payload as Record<string, unknown>).forEach((key) =>
+        formData.append(key, (call.payload as Record<string, unknown>)[key] as string),
+      );
+      options.body = formData;
+    }
+
     return headers;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, complexity
   public makeRequest(call: ApiCallItem): Observable<HttpResponse<any>> {
     const method = call.method ?? (call.payload ? 'POST' : 'GET');
     const { api } = call;
@@ -125,6 +143,10 @@ export class ApiCallerService {
 
     if (call.binaryResponse) {
       options.responseType = 'blob';
+    }
+
+    if (call.sendCookies) {
+      options.withCredentials = true;
     }
 
     if (call.needsAuth) {

@@ -18,6 +18,9 @@
           "configurations": {
             "production": {
               "tsConfig": "projects/api-caller/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/api-caller/tsconfig.lib.json"
             }
           }
         },
@@ -32,15 +35,12 @@
           "builder": "@angular-eslint/builder:lint",
           "options": {
             "eslintConfig": ".eslintrc.json",
-            "lintFilePatterns": [
-              "projects/**/*.ts",
-              "projects/**/*.html"
-            ]
+            "lintFilePatterns": ["projects/**/*.ts", "projects/**/*.html"]
           }
         }
       }
-    }},
-  "defaultProject": "api-caller",
+    }
+  },
   "cli": {
     "cache": {
       "enabled": false
