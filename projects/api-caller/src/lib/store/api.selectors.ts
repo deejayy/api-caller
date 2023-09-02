@@ -4,7 +4,7 @@ import { ApiCallItem } from '../model/api-call-item.model';
 import { apiStateId } from '../model/api-state-id';
 import { ApiState, GlobalApiState, initialApiCallerState } from './api.state';
 
-export const getStateId = (payload: ApiCallItem): string => `${payload.api ?? ''}${payload.path}`;
+export const getStateId = (payload: ApiCallItem): string => `${payload.api ?? ''}${payload.idOverride ?? payload.path}`;
 
 const getApiState = createFeatureSelector<GlobalApiState>(apiStateId);
 const getApiSubState = (stateId: string) =>

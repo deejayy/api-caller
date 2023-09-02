@@ -17,6 +17,7 @@ export interface ApiCallItem {
   method?: string;
   localErrorHandling?: boolean;
   sendCookies?: boolean;
+  idOverride?: string;
 }
 
 export interface ApiInterface {
