@@ -1,6 +1,6 @@
 {
   "name": "@deejayy/api-caller",
-  "version": "17.0.0",
+  "version": "17.0.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -28,9 +28,9 @@
     "@angular/platform-browser": "^17",
     "@angular/platform-browser-dynamic": "^17",
     "@angular/router": "^17",
-    "@ngrx/effects": "^16",
-    "@ngrx/store": "^16",
-    "@ngrx/store-devtools": "^16",
+    "@ngrx/effects": "^17",
+    "@ngrx/store": "^17",
+    "@ngrx/store-devtools": "^17",
     "immer": "^10",
     "rxjs": "^7",
     "tslib": "^2.3.0",

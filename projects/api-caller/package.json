@@ -1,6 +1,6 @@
 {
   "name": "@deejayy/api-caller",
-  "version": "17.0.0",
+  "version": "17.0.1",
   "description": "Simple Api Caller library for Angular",
   "private": false,
   "repository": {
