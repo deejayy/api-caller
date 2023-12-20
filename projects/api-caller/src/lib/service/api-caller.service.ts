@@ -98,6 +98,7 @@ export class ApiCallerService {
     };
   }
 
+  // eslint-disable-next-line complexity
   public makeHeaders(call: ApiCallItem, options: SimplifiedHttpOptions) {
     let headers = new HttpHeaders();
 
@@ -116,7 +117,9 @@ export class ApiCallerService {
       const encodedData = Object.keys(call.payload as Record<string, unknown>)
         .map(
           (key) =>
-            `${encodeURIComponent(key)}=${encodeURIComponent((call.payload as Record<string, unknown>)[key] as string)}`,
+            `${encodeURIComponent(key)}=${encodeURIComponent(
+              (call.payload as Record<string, unknown>)[key] as string,
+            )}`,
         )
         .join('&');
       options.body = encodedData;
@@ -128,6 +131,14 @@ export class ApiCallerService {
         formData.append(key, (call.payload as Record<string, unknown>)[key] as string),
       );
       options.body = formData;
+    }
+
+    if (call.extraHeaders && Object.keys(call.extraHeaders).length > 0) {
+      Object.keys(call.extraHeaders).forEach((key) => {
+        if (call.extraHeaders?.[key] !== undefined) {
+          headers.append(key, call.extraHeaders[key]!);
+        }
+      });
     }
 
     return headers;
